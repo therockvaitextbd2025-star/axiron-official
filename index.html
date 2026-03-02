@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXiRON - Official Platform</title>
+<style>
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; line-height:1.6; color:#333; background:#f9f9f9; }
+header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color:white; padding:70px 20px; text-align:center; }
+header h1 { margin:0; font-size:2.8em; }
+header p { margin:10px 0 20px; font-size:1.2em; }
+.btn { background:#ff9800; color:white; padding:15px 40px; border-radius:30px; text-decoration:none; font-weight:bold; display:inline-block; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:0.3s; }
+.btn:hover { background:#e68a00; }
+.container { max-width:900px; margin:auto; padding:20px; }
+.card { background:white; padding:25px; margin-bottom:25px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.05); }
+.section-title { color:#1a73e8; border-bottom:3px solid #1a73e8; display:inline-block; margin-bottom:15px; font-size:1.4em; }
+ul { margin-left:20px; }
+footer { background:#222; color:#ccc; text-align:center; padding:35px 10px; margin-top:40px; }
+footer a { color:#fff; text-decoration:underline; margin:0 10px; }
+.faq { margin-top:15px; }
+.faq h4 { cursor:pointer; background:#1a73e8; color:white; padding:10px 15px; border-radius:8px; margin-bottom:5px; }
+.faq p { display:none; padding:10px 15px; background:#f1f1f1; border-radius:8px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>AXiRON</h1>
+    <p>Earn points by completing tasks, surveys, and interacting with promotional content</p>
+    <a href="আপনার_ড্রাইভ_লিঙ্ক_এখানে" class="btn">Download AXiRON APK</a>
+</header>
+
+<div class="container">
+
+<!-- How It Works -->
+<div class="card">
+<h2 class="section-title">How It Works (কিভাবে কাজ করে)</h2>
+<ul>
+<li><strong>Complete Tasks (CPA Offers):</strong> Users complete partner tasks like app installation, registration, or service sign-ups to earn points.</li>
+<li><strong>Participate in Surveys:</strong> Share opinions in online surveys to earn points.</li>
+<li><strong>Engage with Promotional Content:</strong> Interact with promotional content to earn points.</li>
+</ul>
+<p><strong>Note:</strong> Points are awarded based on completed activities. Using VPN, fake accounts, or prohibited methods may result in block or point rejection.</p>
+</div>
+
+<!-- App Features -->
+<div class="card">
+<h2 class="section-title">AXiRON App Features (অ্যাপের বৈশিষ্ট্য)</h2>
+<ul>
+<li>Point-Based Reward System</li>
+<li>Complete CPA + Surveys + Ads for points</li>
+<li>No real-money system inside the app</li>
+<li>Fraud & VPN protection: VPN users will be blocked</li>
+<li>Secure cloud-based database</li>
+<li>Global accessibility</li>
+<li>Referral system (optional)</li>
+<li>Manual & automatic review for reward validation</li>
+</ul>
+</div>
+
+<!-- Privacy Policy -->
+<div class="card" id="privacy">
+<h2 class="section-title">Privacy Policy (গোপনীয়তা নীতি)</h2>
+<ul>
+<li>Minimal info like email, device ID, and usage data is collected to secure accounts.</li>
+<li>Third-party partners may display promotional content and collect anonymized non-personal data.</li>
+<li>Users can request data deletion anytime via email.</li>
+<li>Not intended for children under 13.</li>
+<li>No real-money transactions occur inside the app; points are used for completed activity tracking.</li>
+</ul>
+</div>
+
+<!-- Terms & Conditions -->
+<div class="card" id="terms">
+<h2 class="section-title">Terms & Conditions (শর্তাবলী)</h2>
+<ul>
+<li>Rewards are based solely on completed tasks, surveys, and engagement with promotional content.</li>
+<li>VPN usage, fake accounts, or fraudulent activity is strictly prohibited.</li>
+<li>No guaranteed income is promised.</li>
+<li>Minimum withdrawal, processing time, and referral rules are defined inside the app.</li>
+<li>The app owner reserves the right to modify the point system or block accounts for violations.</li>
+</ul>
+</div>
+
+<!-- FAQ Section -->
+<div class="card">
+<h2 class="section-title">FAQ (প্রশ্ন ও উত্তর)</h2>
+<div class="faq">
+<h4>Q1: Can I earn real money directly from the app?</h4>
+<p>No, the app uses a points system based on completed activities. Rewards are processed according to points.</p>
+<h4>Q2: What happens if I use a VPN?</h4>
+<p>VPN usage is not allowed. Accounts using VPN may be blocked, and points will be forfeited.</p>
+<h4>Q3: How are points calculated?</h4>
+<p>Points are awarded based on completed CPA tasks, surveys, and promotional engagement. Honest participation is required.</p>
+<h4>Q4: Is my data safe?</h4>
+<p>All user data is secured in a cloud-based database. Minimal info is collected, and data deletion is available via contact email.</p>
+</div>
+</div>
+
+<!-- Contact Section -->
+<div class="card" id="contact">
+<h2 class="section-title">Contact Us (যোগাযোগ)</h2>
+<p>Developer: Md Rakib Islam</p>
+<p>Email: mdrakibislamrakib424@gmail.com</p>
+<p>Country: Bangladesh</p>
+<p>For queries, support, or data deletion requests, please contact us via email.</p>
+</div>
+
+</div>
+
+<footer>
+<p>&copy; 2026 AXiRON Dev Team | All Rights Reserved</p>
+<p><a href="#terms">Terms & Conditions</a> | <a href="#privacy">Privacy Policy</a></p>
+</footer>
+
+<script>
+// FAQ toggle
+let faqs = document.querySelectorAll(".faq h4");
+faqs.forEach(f => {
+    f.addEventListener("click", ()=> {
+        let p = f.nextElementSibling;
+        if(p.style.display==="block"){ p.style.display="none"; } else { p.style.display="block"; }
+    });
+});
+</script>
+
+</body>
+</html>
