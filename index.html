@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ShopGlobe — International Online Store</title>
@@ -1737,14 +1740,31 @@ async function rAdmRevs(){
     const revs=snap2arr(snap).reverse();
     const rd=$('rv-dt'); if(!rd){loader(false);return;}
     rd.innerHTML=revs.length?`<table><thead><tr><th>User</th><th>Product</th><th>Rating</th><th>Review</th><th>Date</th><th>Actions</th></tr></thead><tbody>
-    ${revs.map(r=>{const p=S.products.find(x=>x.id===r.productId);return`<tr>
-      <td style="font-weight:600">${san(r.userName||'Anonymous')}</td>
-      <td style="font-size:13px">${p?san(p.name).slice(0,28)+'...':san(r.productId||'').slice(0,12)}</td>
-      <td>${starsHTML(r.rating,'13px')} ${r.rating}/5</td>
-      <td style="font-size:13px;max-width:180px">${san(r.text||'—').slice(0,60)}${(r.text?.length||0)>60?'...':''}</td>
-      <td style="font-size:12px;color:var(--T3)">${r.createdAt?new Date(r.createdAt).toLocaleDateString():'-'}</td>
-      <td><button class="tb2 td" onclick="delRev('${r.id}','${r.productId}')"><i class="fas fa-trash"></i></button></td>
-    </tr>`;}}).join('')}</tbody></table>`:
+    ${revs.map(r => {
+  const p = (S.products || []).find(x => x.id === r.productId);
+
+  const userName = san(r.userName || 'Anonymous');
+  const productName = p ? san(p.name).slice(0, 28) + '...' : san(r.productId || '').slice(0, 12);
+  const reviewText = san(r.text || '—').slice(0, 60);
+  const hasMoreText = ((r.text && r.text.length) || 0) > 60 ? '...' : '';
+  const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '-';
+
+  return `
+    <tr>
+      <td style="font-weight:600">${userName}</td>
+      <td style="font-size:13px">${productName}</td>
+      <td>${starsHTML(r.rating, '13px')} ${r.rating}/5</td>
+      <td style="font-size:13px; max-width:180px">
+        ${reviewText}${hasMoreText}
+      </td>
+      <td style="font-size:12px; color:var(--T3)">${date}</td>
+      <td>
+        <button class="tb2 td" onclick="delRev('${r.id}', '${r.productId}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>`;
+}).join('')}</tbody></table>`:
     '<div class="nd"><i class="fas fa-star"></i>No reviews yet</div>';
   }catch(e){toast('Reviews load failed','error');}
   finally{loader(false);}
