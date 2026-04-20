@@ -331,6 +331,23 @@ input,select,textarea{font-family:inherit;outline:none;}
 .admmain{padding:24px;background:var(--bg);}
 .apanel{display:none;}
 .apanel.on{display:block;}
+
+/* MOBILE ADMIN BOTTOM NAV */
+.mob-admin-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s);z-index:6000;border-top:1px solid rgba(255,255,255,.1);padding:6px 0 8px;}
+.mob-admin-nav-inner{display:flex;justify-content:space-around;align-items:center;}
+.mob-anav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,.55);background:none;border:none;padding:6px 10px;border-radius:var(--r8);cursor:pointer;transition:var(--tr);font-size:10px;font-weight:600;font-family:'DM Sans',sans-serif;min-width:52px;}
+.mob-anav-btn i{font-size:19px;}
+.mob-anav-btn.on{color:var(--p);}
+.mob-anav-btn span{font-size:10px;}
+/* Mobile add product FAB */
+.mob-fab{display:none;position:fixed;bottom:78px;right:18px;z-index:6001;width:56px;height:56px;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:50%;border:none;color:#fff;font-size:22px;box-shadow:0 4px 20px rgba(255,107,43,.5);cursor:pointer;align-items:center;justify-content:center;transition:var(--tr);}
+.mob-fab:hover{transform:scale(1.08);}
+/* Mobile admin top bar */
+.mob-admin-topbar{display:none;background:var(--s);padding:10px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5500;box-shadow:0 2px 10px rgba(0,0,0,.3);}
+.mob-panel-title{color:#fff;font-size:15px;font-weight:800;}
+.mob-topbar-right{display:flex;align-items:center;gap:10px;}
+.mob-logout-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:6px 12px;border-radius:20px;font-size:12.5px;font-weight:700;cursor:pointer;}
+.mob-admin-main{padding:16px;background:var(--bg);padding-bottom:90px;}
 .admhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
 .admtitle{font-size:20px;font-weight:800;}
 .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
@@ -362,7 +379,6 @@ tr:hover td{background:#fafafa;}
 .tabbtn:hover{opacity:.85;transform:translateY(-1px);}
 .nodata{text-align:center;padding:42px;color:var(--t3);}
 .nodata i{font-size:42px;display:block;margin-bottom:10px;}
-
 
 /* MISC */
 .pill{display:inline-block;padding:2px 9px;border-radius:30px;font-size:11.5px;font-weight:700;}
@@ -403,7 +419,11 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
 
 /* RESPONSIVE */
 @media(max-width:1024px){.pgrid,.flashgrid{grid-template-columns:repeat(4,1fr);}.catgrid{grid-template-columns:repeat(6,1fr);}.admlayout{grid-template-columns:1fr;}.admsb{display:none;}.statgrid{grid-template-columns:repeat(2,1fr);}.ftmain{grid-template-columns:1fr 1fr;}}
-@media(max-width:768px){.hmain{flex-wrap:wrap;gap:10px;}.srchb{order:3;max-width:100%;width:100%;}.pgrid,.flashgrid{grid-template-columns:repeat(2,1fr);}.catgrid{grid-template-columns:repeat(4,1fr);}.cartlayout,.colayout,.detlayout,.ftmain{grid-template-columns:1fr;}.bngrid{grid-template-columns:1fr;}.frow{grid-template-columns:1fr;}.sltitle{font-size:24px;}.trklabel{display:none;}.gallthumbs{flex-direction:row;width:100%;max-height:none;overflow-x:auto;}.gallwrap{flex-direction:column;}.detlayout{gap:16px;}}
+@media(max-width:768px){.hmain{flex-wrap:wrap;gap:10px;}.srchb{order:3;max-width:100%;width:100%;}.pgrid,.flashgrid{grid-template-columns:repeat(2,1fr);}.catgrid{grid-template-columns:repeat(4,1fr);}.cartlayout,.colayout,.detlayout,.ftmain{grid-template-columns:1fr;}.bngrid{grid-template-columns:1fr;}.frow{grid-template-columns:1fr;}.sltitle{font-size:24px;}.trklabel{display:none;}.gallthumbs{flex-direction:row;width:100%;max-height:none;overflow-x:auto;}.gallwrap{flex-direction:column;}.detlayout{gap:16px;}
+.admlayout{display:block;}
+.admsb{display:none;}
+.admmain{display:block;padding:14px;padding-bottom:96px;overflow-x:hidden;}
+}
 </style>
 </head>
 <body>
@@ -840,7 +860,20 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
 
 <!-- ========== ADMIN PANEL ========== -->
 <div class="page" id="page-admin">
-  <div class="admlayout">
+
+<!-- MOBILE TOP BAR -->
+<div id="mob-admtop" style="display:none;background:var(--s);padding:12px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5500;box-shadow:0 2px 10px rgba(0,0,0,.3)">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="color:#fff;font-size:16px;font-weight:800">Shop<span style="color:var(--p)">Globe</span></div>
+    <div style="color:rgba(255,255,255,.5);font-size:12px">Admin</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button onclick="nav('home')" style="background:rgba(255,255,255,.1);color:#fff;border:none;padding:6px 11px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-store"></i> Store</button>
+    <button onclick="handleAuth()" style="background:rgba(239,68,68,.8);color:#fff;border:none;padding:6px 11px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-sign-out-alt"></i></button>
+  </div>
+</div>
+
+<div class="admlayout">
     <div class="admsb">
       <div class="admlogo"><h3>ShopGlobe Admin</h3><p id="admuser">Administrator</p></div>
       <nav class="admnav">
@@ -853,7 +886,7 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
         <a onclick="nav('home')" style="margin-top:10px"><i class="fas fa-arrow-left"></i>Back to Store</a>
       </nav>
     </div>
-    <div class="admmain">
+    <div class="admmain" style="padding-bottom:90px">
       <!-- DASHBOARD -->
       <div class="apanel on" id="ap-dash">
         <div class="admhdr"><div class="admtitle">📊 Dashboard</div><div id="admdate" style="font-size:13px;color:var(--t3)"></div></div>
@@ -949,7 +982,23 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
   </div>
 </div>
 
-<!-- FOOTER -->
+<!-- MOBILE BOTTOM NAV for Admin -->
+<div id="mob-admin-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s);z-index:6000;border-top:1px solid rgba(255,255,255,.12);padding:6px 0 10px">
+  <div style="display:flex;justify-content:space-around;align-items:center">
+    <button class="mbn on" id="mbn-dash" onclick="aPanel('dash')" style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--p);background:none;border:none;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-chart-bar" style="font-size:20px"></i><span style="font-size:10px;font-weight:700">Dashboard</span></button>
+    <button class="mbn" id="mbn-prods" onclick="aPanel('prods')" style="display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,.55);background:none;border:none;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-box" style="font-size:20px"></i><span style="font-size:10px;font-weight:700">Products</span></button>
+    <button class="mbn" id="mbn-orders" onclick="aPanel('orders')" style="display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,.55);background:none;border:none;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-shopping-bag" style="font-size:20px"></i><span style="font-size:10px;font-weight:700">Orders</span></button>
+    <button class="mbn" id="mbn-users" onclick="aPanel('users')" style="display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,.55);background:none;border:none;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-users" style="font-size:20px"></i><span style="font-size:10px;font-weight:700">Users</span></button>
+    <button class="mbn" id="mbn-settings" onclick="aPanel('settings')" style="display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,.55);background:none;border:none;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-cog" style="font-size:20px"></i><span style="font-size:10px;font-weight:700">Settings</span></button>
+  </div>
+</div>
+
+<!-- MOBILE FAB: Add Product -->
+<button id="mob-fab-add" onclick="openPM()" style="display:none;position:fixed;bottom:76px;right:16px;z-index:6001;width:54px;height:54px;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:50%;border:none;color:#fff;font-size:22px;box-shadow:0 4px 20px rgba(255,107,43,.5);cursor:pointer;align-items:center;justify-content:center">
+  <i class="fas fa-plus"></i>
+</button>
+
+
 <footer>
   <div class="ftmain">
     <div class="ftbrand">
@@ -2010,11 +2059,18 @@ function submitReview(){
 }
 
 /* ── ADMIN ── */
+function isMobile(){ return window.innerWidth<=768; }
+
 function initAdmin(){
   if(!ST.user){ toast('Please sign in','error'); nav('auth'); return; }
   if(ST.role!=='admin'){ toast('Admin access required','error'); nav('home'); return; }
   var u=ge('admuser'); if(u) u.textContent=(ST.profile&&ST.profile.name)?ST.profile.name:ST.user.email;
   var d=ge('admdate'); if(d) d.textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  /* Mobile UI toggle */
+  var mob=isMobile();
+  var mobTop=ge('mob-admtop'), mobNav=ge('mob-admin-nav');
+  if(mobTop) mobTop.style.display=mob?'flex':'none';
+  if(mobNav) mobNav.style.display=mob?'block':'none';
   loadSettings2(); aPanel('dash');
 }
 
@@ -2023,6 +2079,13 @@ function aPanel(p){
   document.querySelectorAll('.admnav a').forEach(function(a){ a.classList.remove('on'); });
   var ap=ge('ap-'+p),an=ge('an-'+p);
   if(ap) ap.classList.add('on'); if(an) an.classList.add('on');
+  /* Mobile bottom nav highlight */
+  var mbnIds=['mbn-dash','mbn-prods','mbn-orders','mbn-users','mbn-settings'];
+  mbnIds.forEach(function(id){ var b=ge(id); if(b) b.style.color='rgba(255,255,255,.55)'; });
+  var active=ge('mbn-'+p); if(active) active.style.color='var(--p)';
+  /* FAB: show on Products panel, mobile only */
+  var fab=ge('mob-fab-add');
+  if(fab) fab.style.display=(isMobile()&&p==='prods')?'flex':'none';
   if(p==='dash') rDash();
   if(p==='prods') renderAdminProds();
   if(p==='orders') rAdmOrds();
