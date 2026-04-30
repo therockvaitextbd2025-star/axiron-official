@@ -2159,7 +2159,7 @@ function delNotice(id){if(!confirm('Delete notice?'))return;showLoader();db.ref(
 var _origAPanelNotice=aPanel;
 aPanel=function(p){
   _origAPanelNotice(p);
-  if(p==='notices'){var an=ge('an-notices');if(an){document.querySelectorAll('.admnav a').forEach(function(a){a.classList.remove('on');});an.classList.add('on';}rAdmNotices();}
+  if(p==='notices'){var an=ge('an-notices');if(an){document.querySelectorAll('.admnav a').forEach(function(a){a.classList.remove('on');});an.classList.add('on');}rAdmNotices();}
 };
 function updatePriceSlider(){
   if(!ST.products.length) return;
