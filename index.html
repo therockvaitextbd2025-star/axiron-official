@@ -548,6 +548,9 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
       <div class="catitem" onclick="filterCat('Garden')"><div class="catic" style="background:#f0fdf4">🌿</div><div class="catnm">Garden</div></div>
     </div>
   </div>
+  <!-- NOTICE BOARD -->
+  <div id="notice-board" class="wrap" style="margin-top:14px;display:none"></div>
+
   <div class="flashsec wrap">
     <div class="flashhdr">
       <div class="flashtitle"><i class="fas fa-bolt"></i> Flash Sale</div>
@@ -741,6 +744,7 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
         <a onclick="aPanel('payments')" id="an-payments"><i class="fas fa-wallet"></i>Payments</a>
         <a onclick="aPanel('coupons')" id="an-coupons"><i class="fas fa-tag"></i>Coupons</a>
         <a onclick="aPanel('chats')" id="an-chats"><i class="fas fa-comments"></i>Live Chat <span id="chat-unread-badge" style="background:var(--re);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></a>
+        <a onclick="aPanel('notices')" id="an-notices"><i class="fas fa-bullhorn"></i>Notices</a>
         <a onclick="aPanel('settings')" id="an-settings"><i class="fas fa-cog"></i>Settings</a>
         <a onclick="nav('home')" style="margin-top:10px"><i class="fas fa-arrow-left"></i>Back to Store</a>
       </nav>
@@ -810,6 +814,41 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
         <div style="background:#fff3ed;border-radius:var(--r8);padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--s);border:1px solid #fde8df"><i class="fas fa-tag" style="color:var(--p)"></i> Create discount coupons. Users enter the code at checkout to get a discount.</div>
         <div class="dtable" id="coupon-table"></div>
       </div>
+
+      <!-- LIVE CHAT ADMIN -->
+      <div class="apanel" id="ap-chats">
+        <div class="admhdr"><div class="admtitle">💬 Live Chat — User Messages</div><button class="addbtn" onclick="rAdmChats()"><i class="fas fa-sync"></i> Refresh</button></div>
+        <div style="background:#e0f2fe;border-radius:var(--r8);padding:12px 16px;margin-bottom:14px;font-size:13px;color:#0369a1;border:1px solid #bae6fd"><i class="fas fa-info-circle"></i> User-রা chat করলে এখানে দেখা যাবে। তুমি এখান থেকে reply দিলে user-এর chat window-এ সাথে সাথে দেখাবে।</div>
+        <div style="display:grid;grid-template-columns:260px 1fr;gap:12px;height:520px">
+          <div style="background:#fff;border-radius:var(--r12);border:1px solid var(--bd);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--sh)">
+            <div style="padding:12px 14px;border-bottom:1px solid var(--bd);font-size:14px;font-weight:800;color:var(--s);display:flex;align-items:center;gap:7px"><i class="fas fa-users" style="color:var(--p)"></i>Conversations</div>
+            <div id="admin-chat-userlist" style="flex:1;overflow-y:auto;padding:6px"><div style="text-align:center;padding:30px;color:var(--t3)"><i class="fas fa-spinner fa-spin" style="font-size:22px;color:var(--p)"></i><br><br>Loading...</div></div>
+          </div>
+          <div style="background:#fff;border-radius:var(--r12);border:1px solid var(--bd);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--sh)">
+            <div id="admin-chat-header" style="padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;background:#f8fafc;flex-shrink:0">
+              <div style="width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800" id="admin-chat-av">?</div>
+              <div><div style="font-size:14px;font-weight:800" id="admin-chat-name">Select a conversation</div><div style="font-size:12px;color:var(--t3)" id="admin-chat-sub">Choose from left panel</div></div>
+            </div>
+            <div id="admin-chat-msgs" style="flex:1;overflow-y:auto;padding:14px;background:#f8fafc;display:flex;flex-direction:column;gap:8px"><div style="text-align:center;color:var(--t3);padding:40px"><i class="fas fa-comment-dots" style="font-size:40px;display:block;margin-bottom:10px;color:var(--bd)"></i>Select a conversation</div></div>
+            <div style="padding:10px 12px;border-top:1px solid var(--bd);background:#fff;display:flex;gap:8px;align-items:center;flex-shrink:0">
+              <input id="admin-chat-inp" placeholder="Type your reply to user..." style="flex:1;border:1.5px solid var(--bd);border-radius:var(--r8);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;" onkeydown="if(event.key==='Enter')adminSendReply()">
+              <button onclick="adminSendReply()" style="background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;width:44px;height:44px;border-radius:var(--r8);border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTICES -->
+      <div class="apanel" id="ap-notices">
+        <div class="admhdr"><div class="admtitle">📢 Notice Board</div><button class="addbtn" onclick="openAddNotice()"><i class="fas fa-plus"></i>Add Notice</button></div>
+        <div style="background:#fff3ed;border-radius:var(--r8);padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--s);border:1px solid #fde8df;max-width:700px">
+          <i class="fas fa-info-circle" style="color:var(--p)"></i> যেকোনো notice লেখো — সব user home page-এ দেখতে পাবে। "২০টা কিনলে পুরস্কার" type notice এখানে দাও।
+        </div>
+        <div class="dtable" id="notices-table" style="max-width:700px"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="apanel" id="ap-settings">
         <div class="admhdr"><div class="admtitle">⚙️ Settings</div></div>
         <div style="background:#fff;border-radius:var(--r12);border:1px solid var(--bd);padding:22px;max-width:680px;box-shadow:var(--sh)">
           <div style="font-size:15px;font-weight:800;margin-bottom:16px;color:var(--s)">General</div>
@@ -855,7 +894,10 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
     "workers":{".read":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'",".write":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'"},
     "paymentMethods":{".read":true,".write":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'"},
     "coupons":{".read":true,".write":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'"},
-    "notifications":{".read":true,".write":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'"}
+    "notifications":{".read":true,".write":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'"},
+    "adminChats":{".read":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'",".write":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'"},
+    "userChats":{"$uid":{".read":"auth!=null&&(auth.uid===$uid||root.child('users').child(auth.uid).child('role').val()==='admin')",".write":"auth!=null&&(auth.uid===$uid||root.child('users').child(auth.uid).child('role').val()==='admin')"}},
+    "notices":{".read":true,".write":"auth!=null&&root.child('users').child(auth.uid).child('role').val()==='admin'"}
   }
 }</pre>
             <div style="font-size:12px;color:var(--t2);margin-top:6px">Copy → Firebase Console → Realtime Database → Rules</div>
@@ -876,6 +918,7 @@ footer{background:var(--s);color:#fff;margin-top:36px;}
     <button onclick="aPanel('workers')" style="display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.55);background:none;border:none;padding:4px 8px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-people-arrows" style="font-size:18px"></i><span style="font-size:9px;font-weight:700">Workers</span></button>
     <button onclick="aPanel('payments')" style="display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.55);background:none;border:none;padding:4px 8px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-wallet" style="font-size:18px"></i><span style="font-size:9px;font-weight:700">Payments</span></button>
     <button onclick="aPanel('coupons')" style="display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.55);background:none;border:none;padding:4px 8px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-tag" style="font-size:18px"></i><span style="font-size:9px;font-weight:700">Coupons</span></button>
+    <button onclick="aPanel('chats')" style="display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.55);background:none;border:none;padding:4px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;position:relative"><i class="fas fa-comments" style="font-size:18px"></i><span style="font-size:9px;font-weight:700">Chat</span><span id="mob-chat-badge" style="position:absolute;top:0;right:4px;background:var(--re);color:#fff;font-size:9px;width:15px;height:15px;border-radius:50%;display:none;align-items:center;justify-content:center;font-weight:800">0</span></button>
     <button onclick="aPanel('settings')" style="display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.55);background:none;border:none;padding:4px 8px;cursor:pointer;font-family:'DM Sans',sans-serif"><i class="fas fa-cog" style="font-size:18px"></i><span style="font-size:9px;font-weight:700">Settings</span></button>
   </div>
 </div>
@@ -1014,23 +1057,161 @@ var CHAT_OPEN=false;
 var CHAT_CUR_ORDER='general';
 var CHAT_UNREAD=0;
 
+/* ══════════════════════════════════════════
+   SMART AUTO-REPLY BOT — Firebase Real Data
+══════════════════════════════════════════ */
 var BOT_REPLIES={
-  'order':['Your order is being processed! Please allow 7-21 business days for delivery. 📦','We have received your order and our team is working on it! 🎉'],
-  'delivery':['Standard delivery takes 7-21 business days depending on your location. 🚚','Your order will be shipped within 24 hours of payment confirmation!'],
-  'payment':['Payment confirmed! Your order will be dispatched soon. ✅','For payment issues, please share your Transaction ID and we will verify manually.'],
-  'cancel':['We are sorry to hear that! Unfortunately, as a dropshipping store, all sales are final once processed. 😔','Please note that cancellations must be requested within 1 hour of placing the order.'],
-  'track':['You can track your order in the "My Orders" section of your account. 📍','We will send you a tracking update as soon as your order ships!'],
-  'hello':['Hello! Welcome to ShopGlobe Support! 👋 How can I help you today?','Hi there! Great to hear from you. What can I help you with? 😊'],
-  'hi':['Hi there! Welcome to ShopGlobe! 👋 How can I assist you today?','Hello! Happy to help you. What is on your mind?'],
-  'thanks':['You are most welcome! 😊 Is there anything else I can help you with?','Happy to help! Feel free to message us anytime. 🙌'],
-  'default':['Thank you for your message! Our support team will respond shortly. ⏳','We have received your message and will get back to you as soon as possible! 🙏','Our team is reviewing your query. Please allow a few minutes for a response.']
+  'hello':['Hello! 👋 Welcome to ShopGlobe! How can I help you today?'],
+  'hi':['Hi there! 😊 How can I assist you?'],
+  'thanks':['You\'re most welcome! 😊 Anything else I can help with?'],
+  'thank':['Happy to help! 🙏 Feel free to message anytime.']
 };
+
+function getSmartReply(text, userId, orderRef, cb){
+  var t = text.toLowerCase();
+
+  // Order status queries
+  if(t.indexOf('order')>-1||t.indexOf('status')>-1||t.indexOf('কোথায়')>-1||t.indexOf('অবস্থা')>-1||t.indexOf('where')>-1){
+    if(!userId){cb('Please sign in to check your order status. 🔐');return;}
+    db.ref('orders').orderByChild('userId').equalTo(userId).once('value').then(function(snap){
+      var orders=snap2arr(snap).sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+      if(!orders.length){cb('You have no orders yet. Start shopping! 🛍️');return;}
+      // If specific order ref
+      var target=orderRef&&orderRef!=='general'?orders.find(function(o){return o.id===orderRef;}):orders[0];
+      if(!target){target=orders[0];}
+      var statusEmoji={pending:'⏳',confirmed:'✅',shipped:'🚚',delivered:'📦',cancelled:'❌'};
+      var statusMsg={
+        pending:'Your order is pending confirmation. Our team will confirm it shortly.',
+        confirmed:'Your order has been confirmed! We are preparing it for shipment. 📋',
+        shipped:'Your order is on its way! 🚚 Expected delivery: 7-21 business days from order date.',
+        delivered:'Your order has been delivered! 📦 We hope you love your purchase.',
+        cancelled:'Your order has been cancelled. If you need help, please contact us.'
+      };
+      var days=Math.floor((Date.now()-(target.createdAt||Date.now()))/86400000);
+      var reply='📦 *Order Status Update*\n\n'
+        +'Order ID: #'+((target.id||'').slice(-8))+'\n'
+        +'Status: '+(statusEmoji[target.status]||'⏳')+' '+(target.status||'pending').toUpperCase()+'\n'
+        +'Placed: '+days+' day(s) ago\n'
+        +'Total: $'+parseFloat(target.total||0).toFixed(2)+'\n\n'
+        +(statusMsg[target.status]||'Processing your order.');
+      cb(reply);
+    }).catch(function(){cb('Sorry, I could not fetch your order details right now. Please try again. 🙏');});
+    return;
+  }
+
+  // Delivery time query
+  if(t.indexOf('deliver')>-1||t.indexOf('shipping')>-1||t.indexOf('arrive')>-1||t.indexOf('কতদিন')>-1||t.indexOf('পাব')>-1){
+    if(userId&&orderRef&&orderRef!=='general'){
+      db.ref('orders/'+orderRef).once('value').then(function(snap){
+        var o=snap.val();
+        if(o){
+          var days=Math.floor((Date.now()-(o.createdAt||Date.now()))/86400000);
+          var remaining=Math.max(0,21-days);
+          if(o.status==='delivered'){cb('Your order has already been delivered! 📦 Thank you for shopping with us.');return;}
+          if(o.status==='shipped'){cb('🚚 Your order is shipped! Estimated delivery within '+remaining+' more day(s). Country: '+san(o.country||''));return;}
+          cb('📅 Standard delivery takes 7-21 business days. Your order was placed '+days+' day(s) ago. Current status: '+(o.status||'pending').toUpperCase());
+        } else {
+          cb('🚚 Standard delivery: 7-21 business days depending on your location.');
+        }
+      });
+    } else {
+      cb('🚚 Standard delivery takes 7-21 business days worldwide. After shipping, you\'ll see tracking updates in My Orders.');
+    }
+    return;
+  }
+
+  // Payment confirmation query
+  if(t.indexOf('payment')>-1||t.indexOf('paid')>-1||t.indexOf('পেমেন্ট')>-1||t.indexOf('টাকা')>-1){
+    if(userId){
+      db.ref('orders').orderByChild('userId').equalTo(userId).limitToLast(1).once('value').then(function(snap){
+        var orders=snap2arr(snap);
+        if(orders.length){
+          var o=orders[0];
+          cb('💳 Payment received!\n\nMethod: '+san(o.payment||'')+'\nTxn ID: '+san(o.txnId||'N/A')+'\nAmount: $'+parseFloat(o.total||0).toFixed(2)+'\nStatus: '+(o.status==='cancelled'?'❌ Cancelled':'✅ Confirmed'));
+        } else {
+          cb('No payment records found. Please place an order first.');
+        }
+      });
+    } else {
+      cb('Please sign in to check your payment status. 🔐');
+    }
+    return;
+  }
+
+  // Cancel query
+  if(t.indexOf('cancel')>-1||t.indexOf('ক্যান্সেল')>-1||t.indexOf('বাতিল')>-1){
+    if(userId&&orderRef&&orderRef!=='general'){
+      db.ref('orders/'+orderRef+'/status').once('value').then(function(snap){
+        var status=snap.val();
+        if(status==='delivered'){cb('❌ Sorry, delivered orders cannot be cancelled. All sales are final.');}
+        else if(status==='shipped'){cb('⚠️ Your order is already shipped. Cancellation is not possible at this stage.');}
+        else if(status==='cancelled'){cb('Your order is already cancelled.');}
+        else{cb('To cancel your order #'+orderRef.slice(-8)+', please contact our support directly via Telegram. Current status: '+(status||'pending').toUpperCase());}
+      });
+    } else {
+      cb('⚠️ As a dropshipping store, cancellations must be requested within 1 hour of ordering. Please contact support immediately.');
+    }
+    return;
+  }
+
+  // Stock/product query
+  if(t.indexOf('stock')>-1||t.indexOf('available')>-1||t.indexOf('স্টক')>-1||t.indexOf('আছে')>-1){
+    var matchedProd=ST.products.find(function(p){
+      return p.name&&t.indexOf(p.name.toLowerCase().split(' ')[0])>-1;
+    });
+    if(matchedProd){
+      var stk=matchedProd.stock||0;
+      cb('📦 '+san(matchedProd.name)+'\nStock: '+(stk>0?'✅ Available ('+stk+' units)':'❌ Out of Stock')+'\nPrice: $'+parseFloat(matchedProd.price||0).toFixed(2));
+    } else {
+      cb('Please mention the product name to check stock. You can browse all products on our home page! 🛍️');
+    }
+    return;
+  }
+
+  // Price query
+  if(t.indexOf('price')>-1||t.indexOf('cost')>-1||t.indexOf('দাম')>-1||t.indexOf('কত')>-1){
+    var matchedP=ST.products.find(function(p){
+      return p.name&&t.indexOf(p.name.toLowerCase().split(' ')[0])>-1;
+    });
+    if(matchedP){
+      var disc=calcDisc(matchedP.price,matchedP.oldPrice);
+      cb('💰 '+san(matchedP.name)+'\nPrice: $'+parseFloat(matchedP.price||0).toFixed(2)+(disc>0?' ('+disc+'% OFF!)':'')+'\nRating: '+starsHTML(matchedP.rating,'12px')+' '+parseFloat(matchedP.rating||4).toFixed(1));
+    } else {
+      cb('Please mention the product name to check its price. Visit our home page to browse all products! 🛍️');
+    }
+    return;
+  }
+
+  // Simple greetings
+  var simpleKeys=Object.keys(BOT_REPLIES);
+  for(var i=0;i<simpleKeys.length;i++){
+    if(t.indexOf(simpleKeys[i])>-1){
+      var arr=BOT_REPLIES[simpleKeys[i]];
+      cb(arr[Math.floor(Math.random()*arr.length)]);
+      return;
+    }
+  }
+
+  // Default
+  var defaults=[
+    'Thank you for your message! 😊 For quick help, you can ask about:\n• Order status\n• Delivery time\n• Payment confirmation\n• Product availability',
+    'I\'m here to help! 🤖 Ask me about your order status, delivery, payment or any product.',
+    'Our team has received your message. For instant answers, try asking about your order status or delivery time!'
+  ];
+  cb(defaults[Math.floor(Math.random()*defaults.length)]);
+}
 
 function getChatKey(oid){return'sg_chat_'+oid;}
 function getChatMsgs(oid){try{return JSON.parse(localStorage.getItem(getChatKey(oid))||'[]');}catch(e){return[];}}
 function saveChatMsgs(oid,msgs){localStorage.setItem(getChatKey(oid),JSON.stringify(msgs));}
 
 function toggleChat(){
+  // Only show chat if user is logged in and has orders
+  if(!ST.user){
+    toast('Please sign in and place an order to use chat support 🔐','warning');
+    showAdGate(function(){nav('auth');});
+    return;
+  }
   CHAT_OPEN=!CHAT_OPEN;
   var w=ge('chat-window');
   if(CHAT_OPEN){
@@ -1047,16 +1228,32 @@ function toggleChat(){
 
 function loadChatTabs(){
   if(!ST.user)return;
-  // Load user's orders as tabs
   db.ref('orders').orderByChild('userId').equalTo(ST.user.uid).once('value').then(function(snap){
-    var orders=snap2arr(snap).sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);}).slice(0,5);
+    var orders=snap2arr(snap)
+      .sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);})
+      .filter(function(o){return o.status!=='delivered';}) // hide delivered
+      .slice(0,5);
     var tabs=ge('chat-tabs');if(!tabs)return;
+    if(!orders.length){
+      // No active orders
+      tabs.innerHTML='<div class="cord-tab on" data-oid="general" onclick="selectChatOrder(\'general\',this)">💬 General</div>';
+      return;
+    }
     var html='<div class="cord-tab'+(CHAT_CUR_ORDER==='general'?' on':'')+'" data-oid="general" onclick="selectChatOrder(\'general\',this)">💬 General</div>';
     orders.forEach(function(o){
       var short=(o.id||'').slice(-8);
-      html+='<div class="cord-tab'+(CHAT_CUR_ORDER===o.id?' on':'')+'" data-oid="'+o.id+'" onclick="selectChatOrder(\''+o.id+'\',this)">📦 #'+short+'</div>';
+      var statusIc={pending:'⏳',confirmed:'✅',shipped:'🚚'}[o.status]||'📦';
+      html+='<div class="cord-tab'+(CHAT_CUR_ORDER===o.id?' on':'')+'" data-oid="'+o.id+'" onclick="selectChatOrder(\''+o.id+'\',this)">'+statusIc+' #'+short+'</div>';
     });
     tabs.innerHTML=html;
+    // Auto-select first order if on general
+    if(CHAT_CUR_ORDER==='general'&&orders.length){
+      CHAT_CUR_ORDER=orders[0].id;
+      tabs.querySelectorAll('.cord-tab').forEach(function(t){t.classList.remove('on');});
+      var firstTab=tabs.querySelector('[data-oid="'+orders[0].id+'"]');
+      if(firstTab)firstTab.classList.add('on');
+      renderChatMsgs(CHAT_CUR_ORDER);
+    }
   }).catch(function(){});
 }
 
@@ -1114,32 +1311,21 @@ function sendChatMsg(){
   // Send to Telegram
   sendChatToTelegram(text,CHAT_CUR_ORDER);
 
-  // Show typing then auto-reply after delay
+  // Show typing then smart reply
   setTimeout(function(){showTyping();},400);
   setTimeout(function(){
-    var reply=getAutoReply(text);
-    var msgs2=getChatMsgs(CHAT_CUR_ORDER);
-    msgs2.push({role:'shop',text:reply,time:Date.now()});
-    saveChatMsgs(CHAT_CUR_ORDER,msgs2);
-    hideTyping();
-    if(container){container.innerHTML=buildMsgsHTML(msgs2);container.scrollTop=container.scrollHeight;}
-    // Show unread badge if chat is closed
-    if(!CHAT_OPEN){CHAT_UNREAD++;var n=ge('chat-notif');if(n){n.textContent=CHAT_UNREAD;n.style.display='flex';}}
-  },1800+Math.random()*1200);
+    getSmartReply(text, ST.user?ST.user.uid:null, CHAT_CUR_ORDER, function(reply){
+      var msgs2=getChatMsgs(CHAT_CUR_ORDER);
+      msgs2.push({role:'shop',text:reply,time:Date.now()});
+      saveChatMsgs(CHAT_CUR_ORDER,msgs2);
+      hideTyping();
+      if(container){container.innerHTML=buildMsgsHTML(msgs2);container.scrollTop=container.scrollHeight;}
+      if(!CHAT_OPEN){CHAT_UNREAD++;var n=ge('chat-notif');if(n){n.textContent=CHAT_UNREAD;n.style.display='flex';}}
+    });
+  },1500+Math.random()*800);
 }
 
-function getAutoReply(text){
-  var t=text.toLowerCase();
-  var keys=Object.keys(BOT_REPLIES);
-  for(var i=0;i<keys.length;i++){
-    if(keys[i]!=='default'&&t.indexOf(keys[i])>-1){
-      var arr=BOT_REPLIES[keys[i]];
-      return arr[Math.floor(Math.random()*arr.length)];
-    }
-  }
-  var def=BOT_REPLIES['default'];
-  return def[Math.floor(Math.random()*def.length)];
-}
+function getAutoReply(text){return '';} // kept for compatibility
 
 function showTyping(){
   var c=ge('chat-msgs');if(!c)return;
@@ -1190,6 +1376,32 @@ window.addEventListener('load',function(){
     <div class="fg"><label>Description</label><textarea id="pmdesc" rows="3" placeholder="Product description..."></textarea></div>
     <div style="display:flex;gap:20px;margin-bottom:14px"><label class="cbx"><input type="checkbox" id="pmflash"><span>Flash Sale ⚡</span></label><label class="cbx"><input type="checkbox" id="pmactive" checked><span>Published ✓</span></label></div>
     <button onclick="saveProd()" style="width:100%;background:var(--p);color:#fff;padding:12px;border-radius:var(--r8);font-size:15px;font-weight:800;cursor:pointer;border:none"><i class="fas fa-save"></i> Save Product</button>
+  </div>
+</div>
+
+<!-- NOTICE MODAL -->
+<div class="ovl" id="noticemodal">
+  <div class="modal" style="max-width:480px">
+    <button class="mc" onclick="closeM('noticemodal')"><i class="fas fa-times"></i></button>
+    <div class="mt"><i class="fas fa-bullhorn"></i>Add Notice</div>
+    <input type="hidden" id="notice-edit-id">
+    <div class="fg"><label>Notice Title *</label><input id="notice-title" placeholder="e.g. 🎁 Special Offer!"></div>
+    <div class="fg"><label>Notice Message *</label><textarea id="notice-msg" rows="3" placeholder="e.g. Buy 20 products and get a special reward gift! 🎁"></textarea></div>
+    <div class="frow">
+      <div class="fg">
+        <label>Type / Color</label>
+        <select id="notice-type">
+          <option value="info">ℹ️ Info (Blue)</option>
+          <option value="success">✅ Success (Green)</option>
+          <option value="warning">⚠️ Warning (Yellow)</option>
+          <option value="offer">🔥 Offer (Orange)</option>
+          <option value="reward">🎁 Reward (Purple)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Expiry Date (optional)</label><input id="notice-exp" type="date"></div>
+    </div>
+    <div style="margin-bottom:14px"><label class="cbx"><input type="checkbox" id="notice-active" checked><span>Show to all users</span></label></div>
+    <button onclick="saveNotice()" style="width:100%;background:var(--p);color:#fff;padding:12px;border-radius:var(--r8);font-size:15px;font-weight:800;cursor:pointer;border:none"><i class="fas fa-save"></i> Save Notice</button>
   </div>
 </div>
 
@@ -1370,7 +1582,7 @@ function saveProd(){if(!ST.user||ST.role!=='admin'){toast('Admin access required
 function delProd(id){if(!confirm('Delete this product?'))return;showLoader();db.ref('products/'+id).remove().then(function(){toast('Product deleted','error');renderAdminProds();}).catch(function(){toast('Delete failed','error');}).finally(function(){hideLoader();});}
 
 /* RENDER */
-function renderHome(){renderGrid();renderFlash();}
+function renderHome(){renderGrid();renderFlash();loadNoticeBoard();setTimeout(renderRecentlyViewed,400);}
 function getFiltered(){var ps=ST.products.slice();if(ST.search){var q=ST.search.toLowerCase();ps=ps.filter(function(p){return(p.name||'').toLowerCase().indexOf(q)>-1||(p.tags||'').toLowerCase().indexOf(q)>-1||(p.brand||'').toLowerCase().indexOf(q)>-1;});}if(ST.cat&&ST.cat!=='All')ps=ps.filter(function(p){return p.category===ST.cat;});if(ST.sort==='price-asc')ps.sort(function(a,b){return a.price-b.price;});if(ST.sort==='price-desc')ps.sort(function(a,b){return b.price-a.price;});if(ST.sort==='rating')ps.sort(function(a,b){return(b.rating||0)-(a.rating||0);});if(ST.sort==='newest')ps.sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});return ps;}
 function renderGrid(){var g=ge('pgrid'),np=ge('noprods');if(!g)return;var ps=getFiltered();g.innerHTML=ps.map(function(p){return pCardHTML(p);}).join('');if(np)np.style.display=ps.length?'none':'block';var t=ge('prodtitle');if(t)t.textContent=ST.cat==='All'?'All Products':ST.cat+' Products';}
 function renderFlash(){var g=ge('flashgrid');if(!g)return;var fp=ST.products.filter(function(p){return p.flash;}).slice(0,5);g.innerHTML=fp.length?fp.map(function(p){return pCardHTML(p);}).join(''):'<div class="nodata" style="grid-column:1/-1"><i class="fas fa-bolt"></i><br>No flash sale items</div>';}
@@ -1531,15 +1743,129 @@ function sendTelegram(order){
 }
 
 function showSuccess(order){
+  // Delivery estimate based on country
+  var deliveryDays={BD:'7-10',IN:'10-14',SG:'7-12',MY:'7-12',US:'14-21',GB:'14-21',DEFAULT:'14-21'};
+  var est=deliveryDays[order.country]||deliveryDays.DEFAULT;
+  var orderDate=new Date();
+  var minDate=new Date(orderDate.getTime()+parseInt(est.split('-')[0])*86400000);
+  var maxDate=new Date(orderDate.getTime()+parseInt(est.split('-')[1])*86400000);
+  var opts={month:'short',day:'numeric'};
+  var estStr=minDate.toLocaleDateString('en-US',opts)+' – '+maxDate.toLocaleDateString('en-US',opts);
+
   var sb=ge('succbox');
-  if(sb)sb.innerHTML='<div style="font-size:15px;font-weight:800;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--bd)">Order Details</div>'+'<div class="sumrow"><span style="color:var(--t3)">Order ID</span><span style="font-weight:700;color:var(--p);font-size:12px;word-break:break-all">'+(order.id||'')+'</span></div>'+'<div class="sumrow"><span style="color:var(--t3)">Name</span><span>'+san(order.name)+'</span></div>'+'<div class="sumrow"><span style="color:var(--t3)">Address</span><span style="font-size:12px">'+san(order.address)+'</span></div>'+'<div class="sumrow"><span style="color:var(--t3)">Payment</span><span>'+san(order.payment)+' — TxnID: '+san(order.txnId)+'</span></div>'+'<div class="sumrow sumtotal"><span>Total</span><span>'+fmtP(order.total)+'</span></div>'+'<div style="margin-top:12px;padding:11px;background:#d1fae5;border-radius:var(--r8);font-size:13.5px;color:#065f46;text-align:center;font-weight:700"><i class="fas fa-check-circle"></i> Confirmed! Delivery in 7-21 business days</div>';
+  if(sb)sb.innerHTML=
+    '<div style="font-size:15px;font-weight:800;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--bd)">Order Details</div>'
+    +'<div class="sumrow"><span style="color:var(--t3)">Order ID</span><span style="font-weight:700;color:var(--p);font-size:12px;word-break:break-all">'+(order.id||'')+'</span></div>'
+    +'<div class="sumrow"><span style="color:var(--t3)">Name</span><span>'+san(order.name)+'</span></div>'
+    +'<div class="sumrow"><span style="color:var(--t3)">Address</span><span style="font-size:12px">'+san(order.address)+'</span></div>'
+    +'<div class="sumrow"><span style="color:var(--t3)">Payment</span><span>'+san(order.payment)+' — TxnID: '+san(order.txnId)+'</span></div>'
+    +'<div class="sumrow sumtotal"><span>Total</span><span>'+fmtP(order.total)+'</span></div>'
+    // Delivery estimate box
+    +'<div style="margin-top:14px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:var(--r12);padding:14px;border:1px solid #93c5fd">'
+      +'<div style="font-size:13px;font-weight:800;color:#1d4ed8;margin-bottom:6px"><i class="fas fa-truck"></i> Estimated Delivery</div>'
+      +'<div style="font-size:22px;font-weight:800;color:var(--s)">'+estStr+'</div>'
+      +'<div style="font-size:12px;color:var(--t2);margin-top:4px">📍 Delivering to '+san(order.country||'your address')+' ('+est+' business days)</div>'
+    +'</div>'
+    +'<div style="margin-top:10px;padding:10px;background:#d1fae5;border-radius:var(--r8);font-size:13px;color:#065f46;text-align:center;font-weight:700"><i class="fas fa-check-circle"></i> Order confirmed! You\'ll get status updates in My Orders.</div>';
   nav('success');
+  // Send welcome message to chat
+  setTimeout(function(){
+    var welcomeMsg='🎉 Order confirmed!\n\nOrder: #'+((order.id||'').slice(-8))+'\nEstimated delivery: '+estStr+'\n\nYou can ask me about your order status, delivery updates, or any questions here! 😊';
+    var msgs=getChatMsgs(order.id);
+    msgs.push({role:'shop',text:welcomeMsg,time:Date.now()});
+    saveChatMsgs(order.id,msgs);
+  },500);
 }
 
 /* ORDER TRACKING */
-function renderMsgBox(oid){var msgs=getMsgs(oid);return'<div class="msg-box"><div class="msg-hdr"><i class="fas fa-comments"></i> Message about this order (saved locally)</div><div class="msg-list" id="msgs-'+oid+'">'+(msgs.length?msgs.map(function(m){return'<div class="msg-bubble">'+san(m.txt)+'<div class="msg-time">'+new Date(m.time).toLocaleString()+'</div></div>';}).join(''):'<div style="color:var(--t3);font-size:12px">No messages yet</div>')+'</div><div class="msg-inp"><input id="msginp-'+oid+'" placeholder="Type message about this order..." onkeydown="if(event.key===\'Enter\')sendMsg(\''+oid+'\')"><button onclick="sendMsg(\''+oid+'\')"><i class="fas fa-paper-plane"></i></button></div></div>';}
-function sendMsg(oid){var inp=ge('msginp-'+oid);if(!inp||!inp.value.trim())return;addMsg(oid,inp.value.trim());inp.value='';var ml=ge('msgs-'+oid);if(ml){var msgs=getMsgs(oid);ml.innerHTML=msgs.map(function(m){return'<div class="msg-bubble">'+san(m.txt)+'<div class="msg-time">'+new Date(m.time).toLocaleString()+'</div></div>';}).join('');ml.scrollTop=ml.scrollHeight;}}
-function renderOrders(){if(!ST.user){toast('Sign in to view orders','warning');showAdGate(function(){nav('auth');});return;}var oc=ge('orderscont');if(!oc)return;oc.innerHTML='<div style="text-align:center;padding:28px;color:var(--t3)"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:var(--p)"></i><br><br>Loading...</div>';db.ref('orders').orderByChild('userId').equalTo(ST.user.uid).once('value').then(function(snap){var orders=snap2arr(snap).sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});if(!orders.length){oc.innerHTML='<div style="text-align:center;padding:52px;color:var(--t3)"><i class="fas fa-box-open" style="font-size:52px;display:block;margin-bottom:14px"></i><h3>No orders yet</h3><button class="batc" onclick="nav(\'home\')" style="max-width:180px;margin:20px auto 0"><i class="fas fa-shopping-bag"></i> Shop Now</button></div>';return;}var steps=['pending','confirmed','shipped','delivered'];var stepIcons={pending:'fa-clock',confirmed:'fa-check',shipped:'fa-truck',delivered:'fa-box'};var stepLabels={pending:'Pending',confirmed:'Confirmed',shipped:'Shipped',delivered:'Delivered'};oc.innerHTML=orders.map(function(o){var isCancelled=o.status==='cancelled';var curIdx=isCancelled?-1:steps.indexOf(o.status);var trkBar=isCancelled?'<div style="background:#fee2e2;border-radius:var(--r8);padding:12px;text-align:center;font-size:14px;font-weight:700;color:var(--re);margin:14px 0"><i class="fas fa-times-circle"></i> Order Cancelled</div>':'<div class="trkbar">'+steps.map(function(st,i){var cls=i<curIdx?'done':(i===curIdx?'active':'');var lCls=i>0&&i<=curIdx?'done':'';return(i>0?'<div class="trkline '+lCls+'"></div>':'')+'<div class="trkstep"><div class="trkcircle '+cls+'"><i class="fas '+stepIcons[st]+'"></i></div><div class="trklabel '+cls+'">'+stepLabels[st]+'</div></div>';}).join('')+'</div>';var canRate=o.status==='delivered';var itmH=(o.items||[]).map(function(it){return'<div class="trkitem"><div class="trkimg">'+(isUrl(it.img)?'<img src="'+san(it.img)+'" style="width:100%;height:100%;object-fit:cover">':(it.img||'📦'))+'</div><span style="flex:1;font-size:13.5px;font-weight:600">'+san(it.name)+'</span><span style="color:var(--t3);font-size:13px">×'+it.qty+'</span><span style="font-weight:800;color:var(--p)">'+fmtP(it.price*it.qty)+'</span></div>';}).join('');var rateH=canRate?'<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'+(o.items||[]).map(function(it){return'<button onclick="openRevModal(\''+it.id+'\')" style="background:linear-gradient(135deg,var(--ye),#d97706);color:#fff;padding:8px 14px;border-radius:var(--r8);font-size:12.5px;font-weight:700;cursor:pointer;border:none"><i class="fas fa-star"></i> Rate: '+san(it.name).slice(0,15)+'...</button>';}).join('')+'</div>':'';return'<div class="trkcard"><div class="trkhdr"><div><div style="font-size:16px;font-weight:800;margin-bottom:2px">Order</div><div class="trkid">'+(o.id||'')+'</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;color:var(--p)">'+fmtP(o.total)+'</div><div style="font-size:12.5px;color:var(--t3)">'+(o.date||'')+'</div></div></div>'+trkBar+'<div class="trkitems">'+itmH+'</div><div style="margin-top:8px;font-size:12.5px;color:var(--t3)">📍 '+san(o.address||'')+' | 💳 '+san(o.payment||'')+(o.txnId?' | '+san(o.txnId):'')+'</div>'+rateH+renderMsgBox(o.id)+'</div>';}).join('');}).catch(function(){oc.innerHTML='<div style="text-align:center;padding:32px;color:var(--t3)">Failed to load orders</div>';});}
+function renderMsgBox(oid){return'';}// legacy kept
+function sendMsg(oid){}// legacy kept
+
+function renderOrderChat(o){
+  if(o.status==='delivered'||o.status==='cancelled')return'';
+  var msgs=getChatMsgs(o.id);
+  var msgsHtml=msgs.length?buildOrderChatMsgsHTML(msgs.slice(-6)):'<div style="text-align:center;color:var(--t3);font-size:12.5px;padding:14px"><i class="fas fa-robot" style="font-size:22px;display:block;margin-bottom:6px;color:var(--p)"></i>Ask about your order status, delivery, or payment!</div>';
+  return'<div style="margin-top:12px;border:1.5px solid #bae6fd;border-radius:var(--r12);overflow:hidden">'
+    +'<div style="background:linear-gradient(135deg,#0f172a,#1e293b);padding:10px 14px;display:flex;align-items:center;gap:8px">'
+      +'<div style="width:28px;height:28px;background:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px">🛍️</div>'
+      +'<div><div style="color:#fff;font-size:13px;font-weight:800">Order Support Chat</div><div style="color:rgba(255,255,255,.55);font-size:11px">Smart bot answers instantly • Admin can also reply</div></div>'
+      +'<div style="margin-left:auto;background:var(--gr);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px">● Online</div>'
+    +'</div>'
+    +'<div id="order-chat-msgs-'+o.id+'" style="background:#f8fafc;padding:12px;max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">'+msgsHtml+'</div>'
+    +'<div style="padding:8px 10px;border-top:1px solid var(--bd);background:#fff;display:flex;gap:7px;align-items:center">'
+      +'<input id="order-chat-inp-'+o.id+'" placeholder="Ask about delivery, status, payment..." style="flex:1;border:1.5px solid var(--bd);border-radius:20px;padding:8px 13px;font-size:13px;font-family:\'DM Sans\',sans-serif;" onkeydown="if(event.key===\'Enter\')sendOrderChat(\''+o.id+'\')">'
+      +'<button onclick="sendOrderChat(\''+o.id+'\')" style="background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-paper-plane"></i></button>'
+    +'</div></div>';
+}
+
+function buildOrderChatMsgsHTML(msgs){
+  return msgs.map(function(m){
+    var isMe=m.role==='user';
+    var ts=new Date(m.time||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    return'<div style="display:flex;gap:6px;align-items:flex-end;'+(isMe?'flex-direction:row-reverse':'')+'">'
+      +'<div style="width:24px;height:24px;border-radius:50%;background:'+(isMe?'linear-gradient(135deg,var(--p),var(--pd))':'linear-gradient(135deg,#0f172a,#1e293b)')+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;flex-shrink:0">'+(isMe?'👤':'🛍️')+'</div>'
+      +'<div style="max-width:78%;padding:8px 11px;border-radius:12px;font-size:12.5px;line-height:1.5;word-break:break-word;'+(isMe?'background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border-bottom-right-radius:3px':'background:#fff;border:1px solid var(--bd);border-bottom-left-radius:3px')+'">'+san(m.text)+'<div style="font-size:9.5px;opacity:.65;margin-top:2px;text-align:'+(isMe?'right':'left')+'">'+ts+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function sendOrderChat(oid){
+  var inp=ge('order-chat-inp-'+oid);if(!inp||!inp.value.trim())return;
+  var text=inp.value.trim();inp.value='';
+  if(!ST.user){toast('Please sign in','warning');return;}
+  var msgs=getChatMsgs(oid);
+  msgs.push({role:'user',text:text,time:Date.now()});
+  saveChatMsgs(oid,msgs);
+  db.ref('userChats/'+ST.user.uid+'/'+oid).push({role:'user',text:text,time:Date.now(),userName:ST.profile?ST.profile.name:ST.user.email,orderRef:oid,read:false});
+  db.ref('adminChats/'+ST.user.uid).set({userName:ST.profile?ST.profile.name:ST.user.email,userEmail:ST.user.email,lastMsg:text,lastTime:Date.now(),unread:true,userId:ST.user.uid});
+  var mw=ge('order-chat-msgs-'+oid);
+  if(mw){mw.innerHTML=buildOrderChatMsgsHTML(msgs.slice(-6));mw.scrollTop=mw.scrollHeight;}
+  sendChatToTelegram(text,oid);
+  setTimeout(function(){
+    getSmartReply(text,ST.user.uid,oid,function(reply){
+      var msgs2=getChatMsgs(oid);
+      msgs2.push({role:'shop',text:reply,time:Date.now()});
+      saveChatMsgs(oid,msgs2);
+      var mw2=ge('order-chat-msgs-'+oid);
+      if(mw2){mw2.innerHTML=buildOrderChatMsgsHTML(msgs2.slice(-6));mw2.scrollTop=mw2.scrollHeight;}
+    });
+  },1500+Math.random()*600);
+}
+
+function renderOrders(){
+  if(!ST.user){toast('Sign in to view orders','warning');showAdGate(function(){nav('auth');});return;}
+  var oc=ge('orderscont');if(!oc)return;
+  oc.innerHTML='<div style="text-align:center;padding:28px;color:var(--t3)"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:var(--p)"></i><br><br>Loading...</div>';
+  db.ref('orders').orderByChild('userId').equalTo(ST.user.uid).once('value').then(function(snap){
+    var orders=snap2arr(snap).sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+    if(!orders.length){oc.innerHTML='<div style="text-align:center;padding:52px;color:var(--t3)"><i class="fas fa-box-open" style="font-size:52px;display:block;margin-bottom:14px"></i><h3>No orders yet</h3><button class="batc" onclick="nav(\'home\')" style="max-width:180px;margin:20px auto 0"><i class="fas fa-shopping-bag"></i> Shop Now</button></div>';return;}
+    var totalItems=orders.reduce(function(s,o){return s+(o.items||[]).reduce(function(s2,i){return s2+(i.qty||0);},0);},0);
+    var rewardHtml=totalItems<20
+      ?'<div style="background:linear-gradient(135deg,#fdf4ff,#f3e8ff);border:2px solid #e879f9;border-radius:var(--r12);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px"><div style="font-size:36px">🎁</div><div style="flex:1"><div style="font-size:15px;font-weight:800;color:#7c3aed">🎁 Reward Program</div><div style="font-size:13px;color:#6b21a8;margin-top:3px">Buy <strong>'+(20-totalItems)+' more product(s)</strong> to unlock a Special Reward Gift!</div><div style="margin-top:8px;background:#e9d5ff;border-radius:20px;height:7px;overflow:hidden"><div style="background:linear-gradient(90deg,#7c3aed,#a855f7);height:100%;width:'+Math.min(100,Math.round(totalItems/20*100))+'%;border-radius:20px"></div></div><div style="font-size:11.5px;color:#6b21a8;margin-top:4px">'+totalItems+'/20 purchased</div></div></div>'
+      :'<div style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);border:2px solid #10b981;border-radius:var(--r12);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px"><div style="font-size:36px">🏆</div><div><div style="font-size:15px;font-weight:800;color:#065f46">🎊 Reward Unlocked!</div><div style="font-size:13px;color:#047857;margin-top:3px">You\'ve purchased <strong>'+totalItems+' products</strong>! Contact support to claim your Special Reward Gift!</div></div></div>';
+    var steps=['pending','confirmed','shipped','delivered'];
+    var stepIcons={pending:'fa-clock',confirmed:'fa-check',shipped:'fa-truck',delivered:'fa-box'};
+    var stepLabels={pending:'Pending',confirmed:'Confirmed',shipped:'Shipped',delivered:'Delivered'};
+    oc.innerHTML=rewardHtml+orders.map(function(o){
+      var isCancelled=o.status==='cancelled';
+      var curIdx=isCancelled?-1:steps.indexOf(o.status);
+      var trkBar=isCancelled?'<div style="background:#fee2e2;border-radius:var(--r8);padding:12px;text-align:center;font-size:14px;font-weight:700;color:var(--re);margin:14px 0"><i class="fas fa-times-circle"></i> Order Cancelled</div>':'<div class="trkbar">'+steps.map(function(st,i){var cls=i<curIdx?'done':(i===curIdx?'active':'');var lCls=i>0&&i<=curIdx?'done':'';return(i>0?'<div class="trkline '+lCls+'"></div>':'')+'<div class="trkstep"><div class="trkcircle '+cls+'"><i class="fas '+stepIcons[st]+'"></i></div><div class="trklabel '+cls+'">'+stepLabels[st]+'</div></div>';}).join('')+'</div>';
+      var itmH=(o.items||[]).map(function(it){
+        var canRateItem=o.status==='delivered';
+        return'<div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--bd);border-radius:var(--r8);margin-bottom:7px;background:#fff">'
+          +'<div class="trkimg">'+(isUrl(it.img)?'<img src="'+san(it.img)+'" style="width:100%;height:100%;object-fit:cover">':(it.img||'📦'))+'</div>'
+          +'<div style="flex:1"><div style="font-size:13.5px;font-weight:700">'+san(it.name)+'</div><div style="font-size:12px;color:var(--t3)">Qty: '+it.qty+' × '+fmtP(it.price)+'</div>'+(canRateItem?'<button onclick="openRevModal(\''+it.id+'\')" style="background:linear-gradient(135deg,var(--ye),#d97706);color:#fff;padding:4px 11px;border-radius:var(--r4);font-size:11.5px;font-weight:700;cursor:pointer;border:none;margin-top:5px"><i class="fas fa-star"></i> Rate & Review</button>':'')+'</div>'
+          +'<div style="font-weight:800;color:var(--p);font-size:14px">'+fmtP(it.price*it.qty)+'</div>'
+          +'</div>';
+      }).join('');
+      var days=Math.floor((Date.now()-(o.createdAt||Date.now()))/86400000);
+      var deliveryEstHTML='';
+      if(o.status==='delivered'){deliveryEstHTML='<div style="background:#d1fae5;border-radius:var(--r8);padding:9px 12px;margin-top:8px;font-size:12.5px;color:#065f46;font-weight:700"><i class="fas fa-check-circle"></i> Delivered! Rate your products above.</div>';}
+      else if(!isCancelled){var rem=Math.max(0,21-days);deliveryEstHTML='<div style="background:#eff6ff;border-radius:var(--r8);padding:9px 12px;margin-top:8px;font-size:12.5px;color:#1d4ed8"><i class="fas fa-truck"></i> Estimated delivery: ~<strong>'+rem+' more day(s)</strong> (placed '+days+' days ago)</div>';}
+      return'<div class="trkcard"><div class="trkhdr"><div><div style="font-size:16px;font-weight:800">#'+((o.id||'').slice(-8))+'</div><div class="trkid">'+(o.date||'')+'</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;color:var(--p)">'+fmtP(o.total)+'</div><div style="font-size:12px;color:var(--t3)">'+san(o.country||'')+'</div></div></div>'+trkBar+'<div class="trkitems">'+itmH+'</div><div style="margin-top:8px;font-size:12px;color:var(--t3)">📍 '+san(o.address||'')+' | 💳 '+san(o.payment||'')+(o.txnId?' | '+san((o.txnId||'').slice(0,16)):'')+'</div>'+deliveryEstHTML+renderOrderChat(o)+'</div>';
+    }).join('');
+  }).catch(function(){oc.innerHTML='<div style="text-align:center;padding:32px;color:var(--t3)">Failed to load orders</div>';});
+}
 
 /* REVIEWS */
 function loadReviews(pid){var rl=ge('reviewslist'),rfw=ge('reviewformwrap');if(!rl)return;rl.innerHTML='<div style="color:var(--t3);padding:10px"><i class="fas fa-spinner fa-spin"></i> Loading reviews...</div>';db.ref('reviews').orderByChild('productId').equalTo(pid).once('value').then(function(snap){var revs=snap2arr(snap).sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});if(!revs.length){rl.innerHTML='<div style="color:var(--t3);padding:14px"><i class="fas fa-comment-slash"></i> No reviews yet. Be the first!</div>';}else{rl.innerHTML=revs.map(function(r){return'<div class="reviewitem"><div class="rvhdr"><div class="rvav">'+(r.userName||'U')[0].toUpperCase()+'</div><div><div class="rvname">'+san(r.userName||'Anonymous')+'</div><div class="rvdate">'+(r.createdAt?new Date(r.createdAt).toLocaleDateString():'')+' </div></div><div style="margin-left:auto">'+starsHTML(r.rating,'14px')+'</div></div>'+(r.text?'<div class="rvtext">'+san(r.text)+'</div>':'')+'</div>';}).join('');}if(ST.user&&rfw){db.ref('orders').orderByChild('userId').equalTo(ST.user.uid).once('value').then(function(oSnap){var canReview=false;oSnap.forEach(function(o){var od=o.val();if(od&&od.status==='delivered'&&od.items&&od.items.some(function(i){return i.id===pid;}))canReview=true;});var alreadyRev=revs.some(function(r){return r.userId===ST.user.uid;});if(canReview&&!alreadyRev){rfw.style.display='block';rfw.innerHTML='<div style="margin-top:14px"><button onclick="openRevModal(\''+pid+'\')" style="background:linear-gradient(135deg,var(--ye),#d97706);color:#fff;padding:11px 24px;border-radius:var(--r8);font-size:14px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none"><i class="fas fa-star"></i> Rate This Product</button></div>';}});}}).catch(function(){rl.innerHTML='<div style="color:var(--t3)">Could not load reviews</div>';});}
@@ -1598,9 +1924,266 @@ function loadSettings2(){db.ref('settings').once('value').then(function(s){if(s.
 function rSettings(){var s=ST.settings;var map={'st-nm':s.siteName||'ShopGlobe','st-ae':s.adminEmail||ADMIN_EMAIL,'st-sh':s.shippingCharge||15,'st-fs':s.freeShipMin||100,'st-tg-token':s.tgToken||'','st-tg-chatid':s.tgChatId||'','st-stripe':s.stripe||'','st-paypal':s.paypal||'','st-crypto':s.crypto||'','st-ph':s.phone||'','st-email':s.supportEmail||''};Object.keys(map).forEach(function(id){var el=ge(id);if(el)el.value=map[id];});}
 function saveSettings(){var settings={siteName:ge('st-nm')?ge('st-nm').value.trim():'ShopGlobe',adminEmail:ge('st-ae')?ge('st-ae').value.trim():ADMIN_EMAIL,shippingCharge:ge('st-sh')?(parseFloat(ge('st-sh').value)||15):15,freeShipMin:ge('st-fs')?(parseFloat(ge('st-fs').value)||100):100,tgToken:ge('st-tg-token')?ge('st-tg-token').value.trim():'',tgChatId:ge('st-tg-chatid')?ge('st-tg-chatid').value.trim():'',stripe:ge('st-stripe')?ge('st-stripe').value.trim():'',paypal:ge('st-paypal')?ge('st-paypal').value.trim():'',crypto:ge('st-crypto')?ge('st-crypto').value.trim():'',phone:ge('st-ph')?ge('st-ph').value.trim():'',supportEmail:ge('st-email')?ge('st-email').value.trim():''};showLoader();db.ref('settings').set(settings).then(function(){ST.settings=Object.assign(ST.settings,settings);toast('Settings saved ✓','success');var fp=ge('ft-phone'),fe=ge('ft-email');if(fp&&settings.phone)fp.innerHTML='<i class="fas fa-phone"></i> '+settings.phone;if(fe&&settings.supportEmail)fe.innerHTML='<i class="fas fa-envelope"></i> '+settings.supportEmail;}).catch(function(e){toast('Save failed: '+e.message,'error');}).finally(function(){hideLoader();});}
 
-/* ═══════════════════════════════════════════════
-   ALL NEW FEATURES JS
-═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════
+   ADMIN LIVE CHAT SYSTEM
+   User messages saved to Firebase
+   Admin replies from Admin Panel
+══════════════════════════════════════ */
+
+var ADMIN_CHAT_CUR = null; // current selected user conversation
+
+/* Override sendChatMsg to save to Firebase for Admin to see */
+var _origSendChatMsg = sendChatMsg;
+sendChatMsg = function(){
+  var inp = ge('chat-inp'); if(!inp || !inp.value.trim()) return;
+  var text = inp.value.trim(); inp.value = ''; inp.style.height = '38px';
+  if(!ST.user){ toast('Please sign in to chat','warning'); toggleChat(); setTimeout(function(){showAdGate(function(){nav('auth');});},300); return; }
+
+  var msgs = getChatMsgs(CHAT_CUR_ORDER);
+  var msg = {role:'user', text:text, time:Date.now(), userName:ST.profile?ST.profile.name:ST.user.email, userId:ST.user.uid};
+  msgs.push(msg);
+  saveChatMsgs(CHAT_CUR_ORDER, msgs);
+
+  // Save to Firebase so Admin can see
+  var chatRef = db.ref('userChats/'+ST.user.uid+'/'+CHAT_CUR_ORDER);
+  chatRef.push({
+    role:'user', text:text, time:Date.now(),
+    userName:ST.profile?ST.profile.name:ST.user.email,
+    userId:ST.user.uid,
+    orderRef:CHAT_CUR_ORDER,
+    read:false
+  });
+  // Save user info for admin list
+  db.ref('adminChats/'+ST.user.uid).set({
+    userName:ST.profile?ST.profile.name:ST.user.email,
+    userEmail:ST.user.email,
+    lastMsg:text, lastTime:Date.now(),
+    unread:true, userId:ST.user.uid
+  });
+
+  var container = ge('chat-msgs');
+  if(container){ container.innerHTML = buildMsgsHTML(msgs); container.scrollTop = container.scrollHeight; }
+
+  sendChatToTelegram(text, CHAT_CUR_ORDER);
+  setTimeout(function(){showTyping();}, 400);
+  setTimeout(function(){
+    var reply = getAutoReply(text);
+    var msgs2 = getChatMsgs(CHAT_CUR_ORDER);
+    msgs2.push({role:'shop', text:reply, time:Date.now()});
+    saveChatMsgs(CHAT_CUR_ORDER, msgs2);
+    hideTyping();
+    if(container){ container.innerHTML = buildMsgsHTML(msgs2); container.scrollTop = container.scrollHeight; }
+  }, 1800 + Math.random()*1000);
+};
+
+/* Listen for Admin replies — show in user chat */
+function listenAdminReplies(){
+  if(!ST.user) return;
+  db.ref('userChats/'+ST.user.uid).on('child_added', function(orderSnap){
+    var oid = orderSnap.key;
+    db.ref('userChats/'+ST.user.uid+'/'+oid).on('child_added', function(msgSnap){
+      var m = msgSnap.val(); if(!m) return;
+      if(m.role !== 'admin') return; // only process admin replies
+      var msgs = getChatMsgs(oid);
+      var exists = msgs.some(function(x){ return x.firebaseKey === msgSnap.key; });
+      if(exists) return;
+      msgs.push({role:'shop', text:m.text, time:m.time, firebaseKey:msgSnap.key});
+      saveChatMsgs(oid, msgs);
+      // Show in chat if open
+      if(CHAT_OPEN && CHAT_CUR_ORDER === oid){
+        var container = ge('chat-msgs');
+        if(container){ container.innerHTML = buildMsgsHTML(msgs); container.scrollTop = container.scrollHeight; }
+      } else {
+        // Badge
+        CHAT_UNREAD++;
+        var n = ge('chat-notif'); if(n){ n.textContent = CHAT_UNREAD; n.style.display = 'flex'; }
+        // Push notification
+        if(Notification.permission === 'granted'){
+          try{ new Notification('💬 ShopGlobe Support replied!', {body:m.text.slice(0,60)}); }catch(e){}
+        }
+      }
+    });
+  });
+}
+
+/* ADMIN: Load all user conversations */
+function rAdmChats(){
+  var ul = ge('admin-chat-userlist'); if(!ul) return;
+  ul.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3)"><i class="fas fa-spinner fa-spin" style="color:var(--p)"></i></div>';
+  db.ref('adminChats').orderByChild('lastTime').once('value').then(function(snap){
+    var convs = snap2arr(snap).reverse();
+    if(!convs.length){
+      ul.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3);font-size:13px"><i class="fas fa-comment-slash" style="font-size:28px;display:block;margin-bottom:8px"></i>No messages yet</div>';
+      return;
+    }
+    // Show unread badge
+    var unreadCount = convs.filter(function(c){ return c.unread; }).length;
+    var badge = ge('chat-unread-badge'), mobBadge = ge('mob-chat-badge');
+    if(badge){ badge.textContent = unreadCount; badge.style.display = unreadCount ? 'inline' : 'none'; }
+    if(mobBadge){ mobBadge.textContent = unreadCount; mobBadge.style.display = unreadCount ? 'flex' : 'none'; }
+
+    ul.innerHTML = convs.map(function(c){
+      var init = (c.userName||'U')[0].toUpperCase();
+      var timeStr = c.lastTime ? new Date(c.lastTime).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
+      var isActive = ADMIN_CHAT_CUR === c.id;
+      return '<div onclick="adminOpenChat(\''+c.id+'\',\''+san(c.userName)+'\',\''+san(c.userEmail)+'\')" style="display:flex;align-items:center;gap:9px;padding:10px 12px;cursor:pointer;border-radius:var(--r8);transition:var(--tr);background:'+(isActive?'var(--pl)':c.unread?'#fffbeb':'transparent')+';border-left:3px solid '+(isActive?'var(--p)':c.unread?'var(--ye)':'transparent')+';">'
+        +'<div style="width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0">'+init+'</div>'
+        +'<div style="flex:1;overflow:hidden">'
+          +'<div style="font-size:13px;font-weight:'+(c.unread?'800':'600')+'">'+san(c.userName||'User')+'</div>'
+          +'<div style="font-size:11.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+san((c.lastMsg||'').slice(0,28))+'</div>'
+        +'</div>'
+        +(c.unread?'<div style="width:8px;height:8px;background:var(--p);border-radius:50%;flex-shrink:0"></div>':'')
+        +'<div style="font-size:10.5px;color:var(--t3);flex-shrink:0">'+timeStr+'</div>'
+        +'</div>';
+    }).join('');
+  }).catch(function(){ ul.innerHTML = '<div style="color:var(--t3);padding:16px;font-size:13px">Failed to load</div>'; });
+}
+
+/* ADMIN: Open specific user chat */
+function adminOpenChat(userId, userName, userEmail){
+  ADMIN_CHAT_CUR = userId;
+  // Mark as read
+  db.ref('adminChats/'+userId+'/unread').set(false);
+  // Update header
+  var av = ge('admin-chat-av'), nm = ge('admin-chat-name'), sub = ge('admin-chat-sub');
+  if(av) av.textContent = (userName||'U')[0].toUpperCase();
+  if(nm) nm.textContent = userName || 'User';
+  if(sub) sub.textContent = userEmail || '';
+  // Load messages
+  var msgWrap = ge('admin-chat-msgs');
+  if(msgWrap) msgWrap.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3)"><i class="fas fa-spinner fa-spin" style="color:var(--p)"></i></div>';
+  db.ref('userChats/'+userId).once('value').then(function(snap){
+    var allMsgs = [];
+    snap.forEach(function(orderSnap){
+      orderSnap.forEach(function(msgSnap){
+        var m = msgSnap.val();
+        if(m) allMsgs.push(Object.assign({}, m, {firebaseKey:msgSnap.key, orderRef:orderSnap.key}));
+      });
+    });
+    allMsgs.sort(function(a,b){ return (a.time||0)-(b.time||0); });
+    if(!allMsgs.length){
+      if(msgWrap) msgWrap.innerHTML = '<div style="text-align:center;color:var(--t3);padding:30px"><i class="fas fa-comment-slash" style="font-size:30px;display:block;margin-bottom:8px"></i>No messages</div>';
+      return;
+    }
+    if(msgWrap){
+      msgWrap.innerHTML = allMsgs.map(function(m){
+        var isUser = m.role === 'user';
+        var ts = new Date(m.time||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        var init = isUser ? (m.userName||'U')[0].toUpperCase() : '🛍️';
+        return '<div style="display:flex;gap:7px;align-items:flex-end;'+(isUser?'':'flex-direction:row-reverse')+'">'
+          +'<div style="width:28px;height:28px;border-radius:50%;background:'+(isUser?'linear-gradient(135deg,var(--s),var(--s2))':'linear-gradient(135deg,var(--p),var(--pd))')+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">'+init+'</div>'
+          +'<div style="max-width:75%">'
+            +'<div style="padding:9px 13px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word;'+(isUser?'background:#fff;border:1px solid var(--bd);border-bottom-left-radius:4px':'background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border-bottom-right-radius:4px')+'">'+san(m.text)+'</div>'
+            +'<div style="font-size:10px;color:var(--t3);margin-top:3px;'+(isUser?'text-align:left':'text-align:right')+'">'+ts+(m.orderRef&&m.orderRef!=='general'?' · Order #'+m.orderRef.slice(-6):'')+'</div>'
+          +'</div></div>';
+      }).join('');
+      msgWrap.scrollTop = msgWrap.scrollHeight;
+    }
+  });
+  rAdmChats(); // refresh list to mark read
+}
+
+/* ADMIN: Send Reply */
+function adminSendReply(){
+  if(!ADMIN_CHAT_CUR){ toast('Select a conversation first','warning'); return; }
+  var inp = ge('admin-chat-inp'); if(!inp || !inp.value.trim()) return;
+  var text = inp.value.trim(); inp.value = '';
+  // Save to Firebase under userChats so user can see it
+  db.ref('userChats/'+ADMIN_CHAT_CUR+'/general').push({
+    role:'admin', text:text, time:Date.now(), userName:'ShopGlobe Support'
+  }).then(function(){
+    toast('Reply sent ✓','success');
+    // Update adminChats last message
+    db.ref('adminChats/'+ADMIN_CHAT_CUR).update({lastMsg:'[Admin] '+text, lastTime:Date.now(), unread:false});
+    adminOpenChat(ADMIN_CHAT_CUR,
+      ge('admin-chat-name')?ge('admin-chat-name').textContent:'User',
+      ge('admin-chat-sub')?ge('admin-chat-sub').textContent:'');
+  }).catch(function(){ toast('Send failed','error'); });
+}
+
+/* Auto-listen for new messages while admin panel is open */
+function startAdminChatListener(){
+  db.ref('adminChats').on('value', function(snap){
+    var unreadCount = 0;
+    snap.forEach(function(c){ if(c.val()&&c.val().unread) unreadCount++; });
+    var badge = ge('chat-unread-badge'), mobBadge = ge('mob-chat-badge');
+    if(badge){ badge.textContent = unreadCount; badge.style.display = unreadCount?'inline':'none'; }
+    if(mobBadge){ mobBadge.textContent = unreadCount; mobBadge.style.display = unreadCount?'flex':'none'; }
+  });
+}
+
+/* Add chats to aPanel handler */
+var _origAPanelChat = _origAPanel;
+_origAPanel = function(p){
+  _origAPanelChat(p);
+  if(p==='chats'){ var an=ge('an-chats'); if(an)an.classList.add('on'); rAdmChats(); }
+};
+
+/* ══ NOTICE BOARD SYSTEM ══ */
+function loadNoticeBoard(){
+  var nb=ge('notice-board');if(!nb)return;
+  db.ref('notices').once('value').then(function(snap){
+    var notices=snap2arr(snap).filter(function(n){
+      if(n.active===false)return false;
+      if(n.expiry&&new Date(n.expiry)<new Date())return false;
+      return true;
+    });
+    if(!notices.length){nb.style.display='none';return;}
+    var colors={info:{bg:'#dbeafe',border:'#93c5fd',color:'#1d4ed8',icon:'fa-info-circle'},success:{bg:'#d1fae5',border:'#6ee7b7',color:'#065f46',icon:'fa-check-circle'},warning:{bg:'#fef3c7',border:'#fcd34d',color:'#92400e',icon:'fa-exclamation-triangle'},offer:{bg:'#fff3ed',border:'#fdb68a',color:'#c2410c',icon:'fa-fire'},reward:{bg:'#f3e8ff',border:'#c4b5fd',color:'#6d28d9',icon:'fa-gift'}};
+    nb.style.display='block';
+    nb.innerHTML=notices.map(function(n){
+      var c=colors[n.type||'info']||colors.info;
+      return'<div style="background:'+c.bg+';border:1.5px solid '+c.border+';border-radius:var(--r12);padding:14px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px">'
+        +'<i class="fas '+c.icon+'" style="color:'+c.color+';font-size:18px;margin-top:2px;flex-shrink:0"></i>'
+        +'<div><div style="font-size:14px;font-weight:800;color:'+c.color+'">'+san(n.title||'')+'</div><div style="font-size:13.5px;color:'+c.color+';opacity:.85;margin-top:3px">'+san(n.msg||'')+'</div></div>'
+        +'</div>';
+    }).join('');
+  }).catch(function(){});
+}
+
+function rAdmNotices(){
+  showLoader();
+  db.ref('notices').once('value').then(function(snap){
+    var notices=snap2arr(snap);var nt=ge('notices-table');if(!nt)return;
+    if(!notices.length){nt.innerHTML='<div class="nodata"><i class="fas fa-bullhorn"></i>No notices yet. Add your first notice!</div>';return;}
+    nt.innerHTML='<table><thead><tr><th>Title</th><th>Message</th><th>Type</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
+      +notices.map(function(n){return'<tr><td style="font-weight:700">'+san(n.title||'')+'</td><td style="font-size:12.5px;max-width:200px">'+san((n.msg||'').slice(0,50))+'</td><td><span class="pill pillo">'+san(n.type||'info')+'</span></td><td style="font-size:12px;color:var(--t3)">'+san(n.expiry||'—')+'</td><td><span class="sbadge '+(n.active!==false?'sc2':'sx2')+'">'+(n.active!==false?'Visible':'Hidden')+'</span></td><td><div class="tabacts"><button class="tabbtn tbe" onclick="editNotice(\''+n.id+'\')"><i class="fas fa-edit"></i></button><button class="tabbtn tbd" onclick="delNotice(\''+n.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('')+'</tbody></table>';
+  }).finally(function(){hideLoader();});
+}
+function openAddNotice(){ge('notice-edit-id').value='';if(ge('notice-title'))ge('notice-title').value='';if(ge('notice-msg'))ge('notice-msg').value='';if(ge('notice-exp'))ge('notice-exp').value='';if(ge('notice-active'))ge('notice-active').checked=true;ge('noticemodal').classList.add('open');}
+function editNotice(id){db.ref('notices/'+id).once('value').then(function(s){var n=s.val();if(!n)return;ge('notice-edit-id').value=id;if(ge('notice-title'))ge('notice-title').value=n.title||'';if(ge('notice-msg'))ge('notice-msg').value=n.msg||'';if(ge('notice-type'))ge('notice-type').value=n.type||'info';if(ge('notice-exp'))ge('notice-exp').value=n.expiry||'';if(ge('notice-active'))ge('notice-active').checked=n.active!==false;ge('noticemodal').classList.add('open');});}
+function saveNotice(){var title=ge('notice-title')?ge('notice-title').value.trim():'';var msg=ge('notice-msg')?ge('notice-msg').value.trim():'';if(!title||!msg){toast('Enter title and message','error');return;}var data={title:title,msg:msg,type:ge('notice-type')?ge('notice-type').value:'info',expiry:ge('notice-exp')?ge('notice-exp').value:'',active:ge('notice-active')?ge('notice-active').checked:true};var eid=ge('notice-edit-id')?ge('notice-edit-id').value:'';showLoader();var p=eid?db.ref('notices/'+eid).update(data):db.ref('notices').push(data);p.then(function(){toast('Notice saved ✓','success');closeM('noticemodal');rAdmNotices();}).catch(function(){toast('Save failed','error');}).finally(function(){hideLoader();});}
+function delNotice(id){if(!confirm('Delete notice?'))return;showLoader();db.ref('notices/'+id).remove().then(function(){toast('Deleted','success');rAdmNotices();}).finally(function(){hideLoader();});}
+
+/* Add notices to aPanel */
+var _origAPanelNotice=aPanel;
+aPanel=function(p){
+  _origAPanelNotice(p);
+  if(p==='notices'){var an=ge('an-notices');if(an){document.querySelectorAll('.admnav a').forEach(function(a){a.classList.remove('on');});an.classList.add('on';}rAdmNotices();}
+};
+function updatePriceSlider(){
+  if(!ST.products.length) return;
+  var maxPrice = Math.max.apply(null, ST.products.map(function(p){ return p.price||0; }));
+  maxPrice = Math.ceil(maxPrice/100)*100; // round up to nearest 100
+  if(maxPrice < 100) maxPrice = 100;
+  var slider = ge('price-max'), tag = ge('price-tag');
+  if(slider){
+    slider.max = maxPrice;
+    slider.value = maxPrice;
+    ST.priceMax = maxPrice;
+  }
+  if(tag) tag.textContent = 'All';
+}
+
+/* Override listenProds to update slider when products load */
+var _origListenProds = listenProds;
+listenProds = function(){
+  _origListenProds();
+  // After products load, update slider
+  var interval = setInterval(function(){
+    if(ST.products.length){ updatePriceSlider(); clearInterval(interval); }
+  }, 500);
+};
 
 /* ── BRANDS LIST ── */
 var ALL_BRANDS=['Samsung','Apple','Nike','Adidas','Sony','LG','Xiaomi','Huawei','OnePlus','Realme','Oppo','Vivo','Asus','Lenovo','HP','Dell','Acer','Toshiba','Panasonic','Philips','Bosch','Dyson','Puma','Reebok','Under Armour','Zara','H&M','Uniqlo','Gucci','Louis Vuitton','Calvin Klein','Levi\'s','Tommy Hilfiger','Ray-Ban','Rolex','Casio','Seiko','L\'Oreal','Nivea','Dove','Garnier','Maybelline','MAC','Chanel','Dior','IKEA','Ashley','Broyhill','Amazon Basics','Anker','JBL','Bose','Sennheiser','Canon','Nikon','GoPro','DJI','Lego','Hasbro','Mattel','Fisher-Price','Pampers','Johnson\'s','Gerber','Huggies','Nestlé','Kellogg\'s','Unilever','P&G','Colgate','Oral-B'];
@@ -1873,7 +2456,7 @@ function sendPushFromAdmin(){
 var _origRDash=rDash;
 rDash=function(){_origRDash();setTimeout(rDashExtra,800);};
 
-/* ── INIT NEW FEATURES ── */
+/* ── INIT ALL FEATURES ── */
 var _origInit=init;
 init=function(){
   _origInit();
@@ -1883,19 +2466,28 @@ init=function(){
   setTimeout(function(){
     renderBrandFilters();
     renderRecentlyViewed();
-    // Show push bar if not dismissed
+    updatePriceSlider();
+    loadNoticeBoard();
+    // Start listening for admin replies (for users)
+    auth.onAuthStateChanged(function(user){
+      if(user) listenAdminReplies();
+    });
+    // If admin, start chat listener
+    if(ST.role==='admin') startAdminChatListener();
+    // Push bar
     var pb=ge('push-bar');
     if(pb&&'Notification' in window&&Notification.permission==='default'&&!localStorage.getItem('sg_push_dismissed')){
       setTimeout(function(){pb.style.display='flex';},3000);
     }
   },1500);
+  // Start admin chat listener after auth loads
+  setTimeout(function(){
+    if(ST.role==='admin') startAdminChatListener();
+  },2000);
 };
 
 /* ── FINAL CALL ── */
 init();
-
-/* ── Firebase rules update for new collections ── */
-// Add coupons + notifications to Firebase rules in Settings panel
 </script>
 </body>
 </html>
