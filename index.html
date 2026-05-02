@@ -6,6 +6,7 @@
 <title>ShopGlobe — International Dropshipping Store</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://js.stripe.com/v3/"></script>
 <script src="https://pl29181398.profitablecpmratenetwork.com/a6/f7/29/a6f729ef48274bc2389ce3b70ca8fb23.js"></script>
 <style>
 :root{--p:#ff6b2b;--pd:#e5501a;--pl:#fff3ed;--s:#0f172a;--s2:#1e293b;--ac:#06b6d4;--gr:#10b981;--re:#ef4444;--ye:#f59e0b;--bg:#f8fafc;--tx:#0f172a;--t2:#475569;--t3:#94a3b8;--bd:#e2e8f0;--sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);--sh2:0 8px 32px rgba(0,0,0,.12);--sh3:0 20px 60px rgba(0,0,0,.18);--r4:4px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;--tr:all .2s cubic-bezier(.4,0,.2,1);}
@@ -1656,9 +1657,17 @@ function renderCheckoutPayments(){
 
   // Card box
   html+='<div id="pay-box-card" class="payinfobox" style="background:#f8fafc;border:1.5px solid var(--bd);display:'+(ST.payment==='card'?'block':'none')+'">'
-    +'<div style="font-weight:800;margin-bottom:8px;color:var(--s)"><i class="fas fa-lock"></i> Card / Stripe Payment</div>'
-    +(s.stripe?'<div style="font-size:13.5px;color:var(--t2);margin-bottom:8px">Stripe gateway configured. Enter card details below.</div>':'<div style="font-size:13.5px;color:var(--t2);margin-bottom:8px">Card gateway not set up yet. Contact admin or configure Stripe key in Admin → Settings.</div>')
-    +'<input id="pay-txn-card" placeholder="Enter card authorization / reference number" style="width:100%;padding:9px;border:1.5px solid var(--bd);border-radius:var(--r8);font-size:14px">'
+    +'<div style="font-weight:800;margin-bottom:10px;color:var(--s);display:flex;align-items:center;gap:7px"><i class="fas fa-lock" style="color:var(--gr)"></i> Secure Card Payment'
+    +'<span style="margin-left:auto;display:flex;gap:5px"><img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" style="height:20px"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png" style="height:20px"></span></div>'
+    +(s.stripe
+      ? '<div id="stripe-card-wrap">'
+        +'<div class="fg"><label>Cardholder Name</label><input id="stripe-name" placeholder="Name on card" style="width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:var(--r8);font-size:14px"></div>'
+        +'<div class="fg"><label>Card Details</label><div id="stripe-card-element" style="padding:11px 13px;border:1.5px solid var(--bd);border-radius:var(--r8);background:#fff;min-height:42px"></div><div id="stripe-errors" style="color:var(--re);font-size:12.5px;margin-top:5px"></div></div>'
+        +'<div id="stripe-ready-msg" style="display:none;background:#d1fae5;border-radius:var(--r8);padding:8px 12px;font-size:13px;color:#065f46;font-weight:700;margin-top:6px"><i class="fas fa-check-circle"></i> Card ready — click Place Order</div>'
+        +'</div>'
+      : '<div style="background:#fff3ed;border-radius:var(--r8);padding:12px;font-size:13.5px;color:#c2410c;text-align:center">'
+        +'<i class="fas fa-exclamation-triangle"></i> Stripe not configured.<br>Admin → Settings → Add Stripe Key.'
+        +'</div>')
     +'</div>';
 
   // Crypto box
@@ -1673,7 +1682,67 @@ function renderCheckoutPayments(){
   if(!ST.payment){ST.payment=methods.length?methods[0].id:'cod';}
 }
 
+/* ══════════════════════════════════════
+   REAL STRIPE PAYMENT INTEGRATION
+══════════════════════════════════════ */
+var stripeInstance=null, stripeCard=null, stripeReady=false;
+
+/* ── SELECT PAYMENT METHOD ── */
 function selPayDyn(id){
+  ST.payment=id;
+  // Remove 'on' from all payment option buttons
+  document.querySelectorAll('[id^="po-"]').forEach(function(el){el.classList.remove('on');});
+  var sel=ge('po-'+id);if(sel)sel.classList.add('on');
+  // Hide all info boxes
+  document.querySelectorAll('[id^="pay-box-"]').forEach(function(el){el.style.display='none';});
+  var box=ge('pay-box-'+id);if(box)box.style.display='block';
+  // Init Stripe when card selected
+  if(id==='card'&&ST.settings.stripe){
+    setTimeout(function(){initStripe();},100);
+  }
+  renderCheckoutSummary();
+}
+
+function initStripe(){
+  var key=ST.settings.stripe;
+  if(!key||!window.Stripe)return;
+  try{
+    stripeInstance=Stripe(key);
+    var elements=stripeInstance.elements();
+    stripeCard=elements.create('card',{
+      style:{base:{fontSize:'15px',fontFamily:'\'DM Sans\',sans-serif',color:'#0f172a','::placeholder':{color:'#94a3b8'}},invalid:{color:'#ef4444'}},
+      hidePostalCode:false
+    });
+    var mount=ge('stripe-card-element');
+    if(mount){
+      stripeCard.mount('#stripe-card-element');
+      stripeCard.on('change',function(e){
+        var err=ge('stripe-errors'),rdy=ge('stripe-ready-msg');
+        if(e.error){if(err)err.textContent=e.error.message;if(rdy)rdy.style.display='none';}
+        else{if(err)err.textContent='';if(e.complete&&rdy)rdy.style.display='block';}
+      });
+      stripeReady=true;
+    }
+  }catch(ex){console.warn('Stripe init failed:',ex);}
+}
+
+function processStripePayment(amount, cb){
+  if(!stripeInstance||!stripeCard){cb(null,'Stripe not initialized');return;}
+  var name=ge('stripe-name')?ge('stripe-name').value.trim():'Customer';
+  stripeInstance.createPaymentMethod({
+    type:'card',
+    card:stripeCard,
+    billing_details:{name:name}
+  }).then(function(result){
+    if(result.error){cb(null,result.error.message);}
+    else{
+      // In real production: send result.paymentMethod.id to your backend
+      // Backend creates PaymentIntent and confirms it
+      // For now we store PaymentMethod ID as txnId
+      cb('pm_'+result.paymentMethod.id,'');
+    }
+  }).catch(function(e){cb(null,e.message||'Card error');});
+}
   ST.payment=id;
   document.querySelectorAll('[id^="po-"]').forEach(function(el){el.classList.remove('on');});
   var sel=ge('po-'+id);if(sel)sel.classList.add('on');
@@ -1703,7 +1772,23 @@ function getDeliveryForCountry(country){var sub=0;getCart().forEach(function(it)
 
 function renderCheckoutSummary(){var cart=getCart();var sub=0;var ih=cart.map(function(it){var p=ST.products.find(function(x){return x.id===it.id;});if(!p)return'';sub+=p.price*it.qty;var ph=getPhotos(p)[0];return'<div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--bd)"><div style="font-size:24px;width:32px;text-align:center">'+(isUrl(ph)?'📦':ph||'📦')+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600">'+san(p.name).slice(0,26)+'</div><div style="font-size:11.5px;color:var(--t3)">×'+it.qty+'</div></div><div style="font-weight:800;color:var(--p);font-size:13px">'+fmtP(p.price*it.qty)+'</div></div>';}).join('');var country=ge('co-country')?ge('co-country').value:'';var del=getDeliveryForCountry(country);var ci=ge('coitems'),cs=ge('cosub'),cd=ge('codel'),ct=ge('cototal'),cn2=ge('curr-note');if(ci)ci.innerHTML=ih;if(cs)cs.textContent=fmtP(sub);if(cd)cd.textContent=del===0?'FREE':fmtP(del);if(ct)ct.textContent=fmtP(sub+del);if(cn2&&ST.currCode!=='USD'){cn2.style.display='block';cn2.textContent='Displayed in '+ST.currCode+' (1 USD = '+CURRENCIES[ST.currCode].rate+' '+ST.currCode+')';}}
 
-function renderCheckout(){var cart=getCart();if(!cart.length){nav('cart');return;}if(ST.user&&ST.profile){var cn=ge('co-name'),ce=ge('co-email'),cp=ge('co-phone');if(cn&&ST.profile.name)cn.value=ST.profile.name;if(ce&&ST.user.email)ce.value=ST.user.email;if(cp&&ST.profile.phone)cp.value=ST.profile.phone;}loadPaymentMethods(function(){renderCheckoutPayments();});renderCheckoutSummary();}
+function renderCheckout(){
+  var cart=getCart();if(!cart.length){nav('cart');return;}
+  if(ST.user&&ST.profile){
+    var cn=ge('co-name'),ce=ge('co-email'),cp=ge('co-phone');
+    if(cn&&ST.profile.name)cn.value=ST.profile.name;
+    if(ce&&ST.user.email)ce.value=ST.user.email;
+    if(cp&&ST.profile.phone)cp.value=ST.profile.phone;
+  }
+  loadPaymentMethods(function(){
+    renderCheckoutPayments();
+    // Init Stripe if card is default
+    if(ST.payment==='card'&&ST.settings.stripe){
+      setTimeout(initStripe,300);
+    }
+  });
+  renderCheckoutSummary();
+}
 
 function getFullAddress(country){if(country==='BD'){var district=ge('co-district')?ge('co-district').value:'';var upazila=ge('co-upazila')?ge('co-upazila').value.trim():'';var village=ge('co-village')?ge('co-village').value.trim():'';var road=ge('co-road')?ge('co-road').value.trim():'';var house=ge('co-house')?ge('co-house').value.trim():'';return[house,road,village,upazila,district,'Bangladesh'].filter(Boolean).join(', ');}else{var state=ge('co-state')?ge('co-state').value.trim():'';var city=ge('co-city')?ge('co-city').value.trim():'';var zip=ge('co-zip')?ge('co-zip').value.trim():'';var house2=ge('co-house')?ge('co-house').value.trim():'';var street=ge('co-street')?ge('co-street').value.trim():'';return[house2,street,city,state,zip].filter(Boolean).join(', ');}}
 
@@ -1718,20 +1803,63 @@ function placeOrder(){
   else{var city=ge('co-city')?ge('co-city').value.trim():'';if(!city){toast('Enter city','error');return;}}
   var cart=getCart();if(!cart.length){toast('Cart is empty!','error');return;}
   if(!ST.payment){toast('Select a payment method','error');return;}
+  var pb=ge('placebtn');
+
+  // ── Stripe Card Payment ──
+  if(ST.payment==='card'&&ST.settings.stripe&&stripeReady){
+    showLoader();if(pb)pb.disabled=true;
+    processStripePayment(1,function(pmId,err){
+      if(err){toast('Card error: '+err,'error');hideLoader();if(pb)pb.disabled=false;return;}
+      _doSaveOrder(pmId||'card_payment');
+    });
+    return;
+  }
+
   var txnInput=ge('pay-txn-'+ST.payment);
   var txnId=txnInput?txnInput.value.trim():'';
-  // COD only needs name confirmation, not a transaction ID
   if(!txnId&&ST.payment!=='cod'){toast('Enter transaction / reference ID','error');return;}
-  if(!txnId&&ST.payment==='cod'){txnId='COD — Pay on Delivery';}
-  var sub=0,items=[];
+  if(ST.payment==='cod'){txnId='COD — Pay on Delivery';}
+  showLoader();if(pb)pb.disabled=true;
+  _doSaveOrder(txnId);
+}
+
+function _doSaveOrder(txnId){
+  var pb=ge('placebtn');
+  var nm=ge('co-name')?ge('co-name').value.trim():'';
+  var ph=ge('co-phone')?ge('co-phone').value.trim():'';
+  var cn=ge('co-country')?ge('co-country').value:'';
+  var cart=getCart();var sub=0,items=[];
   cart.forEach(function(it){var p=ST.products.find(function(x){return x.id===it.id;});if(!p)return;sub+=p.price*it.qty;items.push({id:p.id,name:p.name,price:p.price,qty:it.qty,img:getPhotos(p)[0]||'📦'});});
   var del=getDeliveryForCountry(cn);
+  var discountAmt=ST.couponDiscount||0;
+  var total=Math.max(0,sub+del-discountAmt);
   var fullAddr=getFullAddress(cn);
   var payMethod=ST.paymentMethods.find(function(m){return m.id===ST.payment;})||{name:ST.payment};
-  var order={userId:ST.user.uid,userEmail:ST.user.email,name:nm,phone:ph,email:ge('co-email')?ge('co-email').value:'',country:cn,address:fullAddr,zip:ge('co-zip')?ge('co-zip').value:'',note:ge('co-note')?ge('co-note').value:'',items:items,subtotal:sub,shipping:del,total:sub+del,payment:payMethod.name,paymentId:ST.payment,txnId:txnId,currency:ST.currCode,currencyRate:CURRENCIES[ST.currCode]?CURRENCIES[ST.currCode].rate:1,status:'pending',createdAt:Date.now(),date:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})};
-  showLoader();
-  var pb=ge('placebtn');if(pb)pb.disabled=true;
-  db.ref('orders').push(order).then(function(ref){order.id=ref.key;var ups=items.map(function(item){var p=ST.products.find(function(x){return x.id===item.id;});if(p&&p.stock>0)return db.ref('products/'+item.id+'/stock').set(Math.max(0,(p.stock||0)-item.qty));return Promise.resolve();});return Promise.all(ups).then(function(){return order;});}).then(function(ord){saveCart([]);sendTelegram(ord);showSuccess(ord);}).catch(function(e){toast('Order failed: '+e.message,'error');if(pb)pb.disabled=false;}).finally(function(){hideLoader();});
+  var order={
+    userId:ST.user.uid,userEmail:ST.user.email,
+    name:nm,phone:ph,email:ge('co-email')?ge('co-email').value:'',
+    country:cn,address:fullAddr,zip:ge('co-zip')?ge('co-zip').value:'',
+    note:ge('co-note')?ge('co-note').value:'',
+    items:items,subtotal:sub,shipping:del,
+    discount:discountAmt,couponCode:ST.couponCode||'',
+    total:total,
+    payment:payMethod.name||ST.payment,paymentId:ST.payment,txnId:txnId,
+    currency:ST.currCode,currencyRate:CURRENCIES[ST.currCode]?CURRENCIES[ST.currCode].rate:1,
+    status:'pending',createdAt:Date.now(),
+    date:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
+  };
+  db.ref('orders').push(order).then(function(ref){
+    order.id=ref.key;
+    var ups=items.map(function(item){
+      var p=ST.products.find(function(x){return x.id===item.id;});
+      if(p&&p.stock>0)return db.ref('products/'+item.id+'/stock').set(Math.max(0,(p.stock||0)-item.qty));
+      return Promise.resolve();
+    });
+    return Promise.all(ups).then(function(){return order;});
+  }).then(function(ord){
+    saveCart([]);ST.couponDiscount=0;ST.couponCode='';
+    sendTelegram(ord);showSuccess(ord);
+  }).catch(function(e){toast('Order failed: '+e.message,'error');if(pb)pb.disabled=false;}).finally(function(){hideLoader();});
 }
 
 /* TELEGRAM */
