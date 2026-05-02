@@ -1748,7 +1748,7 @@ function processStripePayment(amount, cb){
   var sel=ge('po-'+id);if(sel)sel.classList.add('on');
   document.querySelectorAll('[id^="pay-box-"]').forEach(function(el){el.style.display='none';});
   var box=ge('pay-box-'+id);if(box)box.style.display='block';
-}
+
 
 /* COUNTRY ADDRESS */
 function onCountryChange(country){
